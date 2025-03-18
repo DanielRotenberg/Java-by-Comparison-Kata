@@ -7,35 +7,34 @@ import java.nio.file.Path
 class PythonAnalyzer(private val file: Path) : Analyzer {
     @Throws(IOException::class)
     override fun analyze(): ResultData? {
-        var number_of_imports = 0
-        var lines_of_code = 0
-        var number_of_methods = 0
-        var comment_lines_of_code = 0
-
-        val file_contents = Files.readAllLines(this.file)
-        for (line in file_contents) {
-            lines_of_code += 1
-            if (line.trim { it <= ' ' }.startsWith("import")) {
-                number_of_imports += 1
-            }
-            if (line.trim { it <= ' ' }.startsWith("from")) {
-                number_of_imports += 1
-                // In Python a comment starts with '#'
-            } else if (line.trim { it <= ' ' }.startsWith("#")) {
-                comment_lines_of_code += 1
-                // In Python a method is defined with 'def'
-            } else if (line.trim { it <= ' ' }.startsWith("def")) {
-                number_of_methods += 1
-            }
-        }
-
+        val pythonTypes = Files.readAllLines(file).map(::toPythonType)
         return ResultData(
             1,
             this.file.toString(),
-            lines_of_code,
-            comment_lines_of_code,
-            number_of_methods,
-            number_of_imports
+            pythonTypes.count(),
+            pythonTypes.count { type -> type == PythonTypes.Comment },
+            pythonTypes.count { type -> type == PythonTypes.Method },
+            pythonTypes.count { type -> type == PythonTypes.Import },
         )
     }
 }
+
+enum class PythonTypes {
+    Import, Comment, Method, Unknown;
+}
+
+
+fun toPythonType(line: String): PythonTypes {
+    return when {
+        line.isImport() -> PythonTypes.Import
+        line.isComment() -> PythonTypes.Comment
+        line.isMethod() -> PythonTypes.Method
+        else -> PythonTypes.Unknown
+    }
+}
+
+private fun String.isImport() = startWith("import") || startWith("from")
+private fun String.isComment() = startWith("#")
+private fun String.isMethod() = startWith("def")
+
+private fun String.startWith(type: String) = trim { it <= ' ' }.startsWith(type)
