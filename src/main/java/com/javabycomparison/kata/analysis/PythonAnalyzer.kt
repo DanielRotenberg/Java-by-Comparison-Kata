@@ -1,22 +1,19 @@
 package com.javabycomparison.kata.analysis
 
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PythonAnalyzer(private val file: Path) : Analyzer {
-    @Throws(IOException::class)
-    override fun analyze(): ResultData? {
-        val pythonTypes = Files.readAllLines(file).map(::toPythonType)
-        return ResultData(
-            1,
-            this.file.toString(),
-            pythonTypes.count(),
-            pythonTypes.count { type -> type == PythonTypes.Comment },
-            pythonTypes.count { type -> type == PythonTypes.Method },
-            pythonTypes.count { type -> type == PythonTypes.Import },
-        )
-    }
+// to-do -> add exception handling for IOException
+fun pythonAnalyze(file: Path): ResultData {
+    val pythonTypes = Files.readAllLines(file).map(::toPythonType)
+    return ResultData(
+        1,
+        file.toString(),
+        pythonTypes.count(),
+        pythonTypes.count { type -> type == PythonTypes.Comment },
+        pythonTypes.count { type -> type == PythonTypes.Method },
+        pythonTypes.count { type -> type == PythonTypes.Import },
+    )
 }
 
 enum class PythonTypes {

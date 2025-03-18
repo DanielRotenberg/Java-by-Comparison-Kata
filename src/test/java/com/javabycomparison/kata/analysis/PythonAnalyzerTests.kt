@@ -13,7 +13,7 @@ internal class PythonAnalyzerTests {
     @Throws(IOException::class)
     fun analyzePython() {
         pythonResult =
-            PythonAnalyzer(Paths.get("./src/main/resources/python_files/function.py")).analyze()
+            pythonAnalyze(Paths.get("./src/main/resources/python_files/function.py"))
     }
 
     @Test

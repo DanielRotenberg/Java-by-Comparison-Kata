@@ -1,9 +1,9 @@
 package com.javabycomparison.kata.search
 
 import com.javabycomparison.kata.analysis.AnalyzerImpl
-import com.javabycomparison.kata.analysis.JavaAnalyzer
-import com.javabycomparison.kata.analysis.PythonAnalyzer
 import com.javabycomparison.kata.analysis.ResultData
+import com.javabycomparison.kata.analysis.javaAnalyzer
+import com.javabycomparison.kata.analysis.pythonAnalyze
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,7 +30,7 @@ class SearchClient(private val smry: Boolean) {
                     if (!smry) {
                         println("File " + file.toString() + " is a Java file. It will be analyzed.")
                     }
-                    val resultData = JavaAnalyzer(file).analyze()
+                    val resultData = javaAnalyzer(file)
                     resultsList.add(resultData)
                 } else if (isPythonFile(file)) {
                     if (!smry) {
@@ -38,7 +38,7 @@ class SearchClient(private val smry: Boolean) {
                             "File " + file.toString() + " is a Python file. It will be analyzed."
                         )
                     }
-                    val resultData = PythonAnalyzer(file).analyze()
+                    val resultData = pythonAnalyze(file)
                     resultsList.add(resultData)
                 } else {
                     if (!Files.isDirectory(file)) {
