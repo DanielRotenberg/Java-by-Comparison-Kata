@@ -1,63 +1,60 @@
-package com.javabycomparison.kata.analysis;
+package com.javabycomparison.kata.analysis
 
-import java.util.StringJoiner;
+import java.util.*
 
-public class ResultData {
-  public int type;
-  public String name;
-  public int L;
-  public int LOC;
-  public int commentLOC;
-  public int numMethod;
-  public int nImports;
+class ResultData {
+    @JvmField
+    var type: Int = 0
+    @JvmField
+    var name: String? = null
+    var L: Int = 0
+    @JvmField
+    var LOC: Int = 0
+    @JvmField
+    var commentLOC: Int = 0
+    @JvmField
+    var numMethod: Int = 0
+    @JvmField
+    var nImports: Int = 0
 
-  public ResultData(int type, String name, int LOC, int commentLOC, int numMethod, int nImports) {
-    this.type = type;
-    this.name = name.replaceAll("\\\\", "/");
-    this.LOC = LOC;
-    this.commentLOC = commentLOC;
-    this.numMethod = numMethod;
-    this.nImports = nImports;
-  }
+    constructor(type: Int, name: String, LOC: Int, commentLOC: Int, numMethod: Int, nImports: Int) {
+        this.type = type
+        this.name = name.replace("\\\\".toRegex(), "/")
+        this.LOC = LOC
+        this.commentLOC = commentLOC
+        this.numMethod = numMethod
+        this.nImports = nImports
+    }
 
-  /*
+    /*
   public ResultData(boolean java){
       this.javaFile = java;
 
   }
   */
-  public ResultData() {}
+    constructor()
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
 
-    if (o == null || getClass() != o.getClass()) return false;
-    ResultData that = (ResultData) o;
-    return type == that.type
-        && L == that.L
-        && LOC == that.LOC
-        && commentLOC == that.commentLOC
-        && numMethod == that.numMethod
-        && nImports == that.nImports
-        && name.equals(that.name);
-  }
+        if (o == null || javaClass != o.javaClass) return false
+        val that = o as ResultData
+        return type == that.type && L == that.L && LOC == that.LOC && commentLOC == that.commentLOC && numMethod == that.numMethod && nImports == that.nImports && name == that.name
+    }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 
-  @Override
-  public String toString() {
-    return new StringJoiner(", ", ResultData.class.getSimpleName() + "[", "]")
-        .add("type=" + type)
-        .add("name='" + name + "'")
-        .add("L=" + L)
-        .add("LOC=" + LOC)
-        .add("commentLOC=" + commentLOC)
-        .add("numMethod=" + numMethod)
-        .add("nImports=" + nImports)
-        .toString();
-  }
+    override fun toString(): String {
+        return StringJoiner(", ", ResultData::class.java.getSimpleName() + "[", "]")
+            .add("type=" + type)
+            .add("name='" + name + "'")
+            .add("L=" + L)
+            .add("LOC=" + LOC)
+            .add("commentLOC=" + commentLOC)
+            .add("numMethod=" + numMethod)
+            .add("nImports=" + nImports)
+            .toString()
+    }
 }
