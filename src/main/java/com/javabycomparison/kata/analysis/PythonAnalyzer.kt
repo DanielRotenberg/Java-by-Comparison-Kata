@@ -24,7 +24,7 @@ enum class PythonTypes {
 }
 
 
-fun toPythonType(line: String): PythonTypes {
+private fun toPythonType(line: String): PythonTypes {
     return when {
         line.isImport() -> PythonTypes.Import
         line.isComment() -> PythonTypes.Comment
