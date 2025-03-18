@@ -1,28 +1,45 @@
-package com.javabycomparison.kata.printing;
+package com.javabycomparison.kata.printing
 
-import com.javabycomparison.kata.analysis.ResultData;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.function.Function;
+import com.javabycomparison.kata.analysis.ResultData
+import java.io.FileOutputStream
+import java.io.IOException
+import java.lang.String
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.*
+import kotlin.Array
+import kotlin.ByteArray
+import kotlin.Throws
+import kotlin.text.toByteArray
 
-public class CSVPrinter {
-  private Path csvFile;
+class CSVPrinter(outputFile: kotlin.String) {
+    private val csvFile: Path
 
-  public CSVPrinter(String outputFile) {
-    this.csvFile = Paths.get(outputFile);
-  }
+    init {
+        this.csvFile = Paths.get(outputFile)
+    }
 
-  public void writeCSV(ResultData[] overallResult) throws IOException {
-    FileOutputStream writer = new FileOutputStream(csvFile.toFile());
-    writer.write(
-        "File Name,Language,Lines of Code,Number of Comments,Number of Methods,Number of Imports\n"
-            .getBytes());
-    Arrays.stream(overallResult)
-        .filter(result -> null != result)
-        .map(
+    @Throws(IOException::class)
+    fun writeCSV(overallResult: Array<ResultData?>) {
+        val writer = FileOutputStream(csvFile.toFile())
+        writer.write(
+            "File Name,Language,Lines of Code,Number of Comments,Number of Methods,Number of Imports\n"
+                .toByteArray()
+        )
+        Arrays.stream<ResultData?>(overallResult)
+            .filter { result: ResultData? -> null != result }
+            .map { result: ResultData? ->
+                (String.join(
+                    ",",
+                    result!!.name,
+                    if ((result.type == 0) == true) "Java" else "Python",
+                    result.LOC.toString(),
+                    result.commentLOC.toString(),
+                    result.numMethod.toString(),
+                    result.nImports.toString()
+                )
+                        + System.lineSeparator())
+            }  /*   .map(
             new Function<ResultData, String>() {
               @Override
               public String apply(ResultData result) {
@@ -36,17 +53,16 @@ public class CSVPrinter {
                         String.valueOf(result.nImports))
                     + System.lineSeparator();
               }
-            })
-        .map(String::getBytes)
-        .forEach(
-            str -> {
-              try {
-                writer.write(str);
-              } catch (IOException e) {
-              }
-            });
+            })*/
+            .map<ByteArray?> { obj: kotlin.String? -> obj!!.toByteArray() }
+            .forEach { str: ByteArray? ->
+                try {
+                    writer.write(str)
+                } catch (e: IOException) {
+                }
+            }
 
-    // to be sure
-    writer.close();
-  }
+        // to be sure
+        writer.close()
+    }
 }
