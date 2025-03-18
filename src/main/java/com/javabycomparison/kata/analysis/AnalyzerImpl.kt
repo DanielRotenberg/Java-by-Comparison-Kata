@@ -1,25 +1,17 @@
-package com.javabycomparison.kata.analysis;
+package com.javabycomparison.kata.analysis
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
 
-public class AnalyzerImpl implements Analyzer {
-  private final Path file;
-
-  public AnalyzerImpl(Path file) {
-    this.file = file;
-  }
-
-  @Override
-  public ResultData analyze() {
-    try {
-      List<String> fileContents = Files.readAllLines(this.file);
-      int l = fileContents.size();
-      return new ResultData(2, this.file.toString(), l, 0, 0, 0);
-    } catch (IOException ioException) {
-      return new ResultData();
+class AnalyzerImpl(private val file: Path) : Analyzer {
+    override fun analyze(): ResultData? {
+        try {
+            val fileContents = Files.readAllLines(this.file)
+            val l = fileContents.size
+            return ResultData(2, this.file.toString(), l, 0, 0, 0)
+        } catch (ioException: IOException) {
+            return ResultData()
+        }
     }
-  }
 }

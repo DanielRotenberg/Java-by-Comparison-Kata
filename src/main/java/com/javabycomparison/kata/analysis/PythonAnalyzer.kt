@@ -1,47 +1,41 @@
-package com.javabycomparison.kata.analysis;
+package com.javabycomparison.kata.analysis
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
 
-public class PythonAnalyzer implements Analyzer {
-  private final Path file;
+class PythonAnalyzer(private val file: Path) : Analyzer {
+    @Throws(IOException::class)
+    override fun analyze(): ResultData? {
+        var number_of_imports = 0
+        var lines_of_code = 0
+        var number_of_methods = 0
+        var comment_lines_of_code = 0
 
-  public PythonAnalyzer(Path file) {
-    this.file = file;
-  }
+        val file_contents = Files.readAllLines(this.file)
+        for (line in file_contents) {
+            lines_of_code += 1
+            if (line.trim { it <= ' ' }.startsWith("import")) {
+                number_of_imports += 1
+            }
+            if (line.trim { it <= ' ' }.startsWith("from")) {
+                number_of_imports += 1
+                // In Python a comment starts with '#'
+            } else if (line.trim { it <= ' ' }.startsWith("#")) {
+                comment_lines_of_code += 1
+                // In Python a method is defined with 'def'
+            } else if (line.trim { it <= ' ' }.startsWith("def")) {
+                number_of_methods += 1
+            }
+        }
 
-  @Override
-  public ResultData analyze() throws IOException {
-    int number_of_imports = 0;
-    int lines_of_code = 0;
-    int number_of_methods = 0;
-    int comment_lines_of_code = 0;
-
-    List<String> file_contents = Files.readAllLines(this.file);
-    for (String line : file_contents) {
-      lines_of_code += 1;
-      if (line.trim().startsWith("import")) {
-        number_of_imports += 1;
-      }
-      if (line.trim().startsWith("from")) {
-        number_of_imports += 1;
-        // In Python a comment starts with '#'
-      } else if (line.trim().startsWith("#")) {
-        comment_lines_of_code += 1;
-        // In Python a method is defined with 'def'
-      } else if (line.trim().startsWith("def")) {
-        number_of_methods += 1;
-      }
+        return ResultData(
+            1,
+            this.file.toString(),
+            lines_of_code,
+            comment_lines_of_code,
+            number_of_methods,
+            number_of_imports
+        )
     }
-
-    return new ResultData(
-        1,
-        this.file.toString(),
-        lines_of_code,
-        comment_lines_of_code,
-        number_of_methods,
-        number_of_imports);
-  }
 }
