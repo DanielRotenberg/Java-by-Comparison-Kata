@@ -1,9 +1,9 @@
-package com.javabycomparison.kata.analysis;
+package com.javabycomparison.kata.analysis
 
-import java.io.IOException;
+import java.io.IOException
 
-public interface Analyzer {
-
-  /** This method analyzes code. */
-  ResultData analyze() throws IOException;
+interface Analyzer {
+    /** This method analyzes code.  */
+    @Throws(IOException::class)
+    fun analyze(): ResultData?
 }
