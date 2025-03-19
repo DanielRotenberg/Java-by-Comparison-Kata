@@ -11,7 +11,7 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.stream.Collectors
 
-class SearchClient(private val smry: Boolean) {
+class SearchClient(private val summery: Boolean) {
     fun collectAllFiles(directoryPath: String): LinkedList<ResultData?>? {
         val resultsList = LinkedList<ResultData?>()
         try {
@@ -27,13 +27,13 @@ class SearchClient(private val smry: Boolean) {
                 .sorted()
                 .collect(Collectors.toList())) {
                 if (isJavaFile(file)) {
-                    if (!smry) {
+                    if (!summery) {
                         println("File " + file.toString() + " is a Java file. It will be analyzed.")
                     }
                     val resultData = javaAnalyzer(file)
                     resultsList.add(resultData)
                 } else if (isPythonFile(file)) {
-                    if (!smry) {
+                    if (!summery) {
                         println(
                             "File " + file.toString() + " is a Python file. It will be analyzed."
                         )
@@ -42,14 +42,14 @@ class SearchClient(private val smry: Boolean) {
                     resultsList.add(resultData)
                 } else {
                     if (!Files.isDirectory(file)) {
-                        if (!smry) {
+                        if (!summery) {
                             println(
                                 "File " + file.toString() + " is neither a Java file nor a Python file."
                             )
                         }
                         resultsList.add(unknownLanguageAnalyzer(file))
                     } else {
-                        if (!smry) {
+                        if (!summery) {
                             println("Skipping directory " + file + ".")
                         }
                     }
@@ -61,19 +61,10 @@ class SearchClient(private val smry: Boolean) {
         }
         return resultsList
     }
-
-    private fun isJavaFile(file: Path): Boolean {
-        if (file.toString().matches(".*\\.java".toRegex())) {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    private fun isPythonFile(file: Path): Boolean {
-        if (file.getFileName().toString().matches(".*\\.py".toRegex())) {
-            return true
-        }
-        return false
-    }
 }
+
+private fun isJavaFile(file: Path): Boolean = isFileOf(file, "java")
+
+private fun isPythonFile(file: Path): Boolean = isFileOf(file, "py")
+
+private fun isFileOf(file: Path, type: String): Boolean = file.toString().matches((".*\\.$type").toRegex())
