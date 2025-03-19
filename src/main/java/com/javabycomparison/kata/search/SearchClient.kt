@@ -1,9 +1,9 @@
 package com.javabycomparison.kata.search
 
-import com.javabycomparison.kata.analysis.AnalyzerImpl
 import com.javabycomparison.kata.analysis.ResultData
 import com.javabycomparison.kata.analysis.javaAnalyzer
-import com.javabycomparison.kata.analysis.pythonAnalyze
+import com.javabycomparison.kata.analysis.pythonAnalyzer
+import com.javabycomparison.kata.analysis.unknownLanguageAnalyzer
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,7 +38,7 @@ class SearchClient(private val smry: Boolean) {
                             "File " + file.toString() + " is a Python file. It will be analyzed."
                         )
                     }
-                    val resultData = pythonAnalyze(file)
+                    val resultData = pythonAnalyzer(file)
                     resultsList.add(resultData)
                 } else {
                     if (!Files.isDirectory(file)) {
@@ -47,7 +47,7 @@ class SearchClient(private val smry: Boolean) {
                                 "File " + file.toString() + " is neither a Java file nor a Python file."
                             )
                         }
-                        resultsList.add(AnalyzerImpl(file).analyze())
+                        resultsList.add(unknownLanguageAnalyzer(file))
                     } else {
                         if (!smry) {
                             println("Skipping directory " + file + ".")
