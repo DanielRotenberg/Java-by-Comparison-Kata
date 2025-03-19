@@ -26,32 +26,24 @@ class SearchClient(private val summery: Boolean) {
                 }
                 .sorted()
                 .collect(Collectors.toList())) {
-                if (isJavaFile(file)) {
-                    if (!summery) {
-                        println("File " + file.toString() + " is a Java file. It will be analyzed.")
+                when {
+                    isJavaFile(file) -> {
+                        printJavaMessage(file, this@SearchClient.summery)
+                        resultsList.add(javaAnalyzer(file))
                     }
-                    val resultData = javaAnalyzer(file)
-                    resultsList.add(resultData)
-                } else if (isPythonFile(file)) {
-                    if (!summery) {
-                        println(
-                            "File " + file.toString() + " is a Python file. It will be analyzed."
-                        )
+
+                    isPythonFile(file) -> {
+                        printPythonMessage(file, this@SearchClient.summery)
+                        resultsList.add(pythonAnalyzer(file))
                     }
-                    val resultData = pythonAnalyzer(file)
-                    resultsList.add(resultData)
-                } else {
-                    if (!Files.isDirectory(file)) {
-                        if (!summery) {
-                            println(
-                                "File " + file.toString() + " is neither a Java file nor a Python file."
-                            )
-                        }
+
+                    !Files.isDirectory(file) -> {
+                        printUnknownLanguageMessage(file, this@SearchClient.summery)
                         resultsList.add(unknownLanguageAnalyzer(file))
-                    } else {
-                        if (!summery) {
-                            println("Skipping directory " + file + ".")
-                        }
+                    }
+
+                    else -> {
+                            printSkippingMessage(file, this@SearchClient.summery)
                     }
                 }
             }
@@ -61,7 +53,32 @@ class SearchClient(private val summery: Boolean) {
         }
         return resultsList
     }
+
+    private fun printSkippingMessage(file: Path?, summery: Boolean) {
+        if (summery) return
+        println("Skipping directory $file.")
+    }
+
+    private fun printUnknownLanguageMessage(file: Path, summery: Boolean) {
+        if (summery) return
+        printLanguageMessage(file, " is neither a Java file nor a Python file.")
+    }
+
+    private fun printPythonMessage(file: Path, summery: Boolean) {
+        if (summery) return
+        printLanguageMessage(file, " is a Python file. It will be analyzed.")
+    }
 }
+
+private fun printJavaMessage(file: Path?, summery: Boolean) {
+    if (summery) return
+    printLanguageMessage(file, " is a Java file. It will be analyzed.")
+}
+
+private fun printLanguageMessage(file: Path?, message: String) {
+    println("File $file$message")
+}
+
 
 private fun isJavaFile(file: Path): Boolean = isFileOf(file, "java")
 
