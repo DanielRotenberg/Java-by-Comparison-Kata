@@ -9,12 +9,45 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-import java.util.stream.Collectors
 
 class SearchClient(private val summery: Boolean) {
     fun collectAllFiles(directoryPath: String): LinkedList<ResultData?>? {
         val resultsList = LinkedList<ResultData?>()
-        try {
+        val file = Paths.get(directoryPath).toFile()
+        // to-do - deal with exceptions
+        file.walk().map { it.toPath() }.filter { path: Path? -> !path.toString().contains(".git") }
+            .filter { path: Path? ->
+                try {
+                    return@filter !Files.isHidden(path)
+                } catch (e: IOException) {
+                    return@filter false
+                }
+            }.onEach { file ->
+                when {
+                    isJavaFile(file) -> {
+                        printJavaMessage(file, this@SearchClient.summery)
+                        resultsList.add(javaAnalyzer(file))
+                    }
+
+                    isPythonFile(file) -> {
+                        printPythonMessage(file, this@SearchClient.summery)
+                        resultsList.add(pythonAnalyzer(file))
+                    }
+
+                    !Files.isDirectory(file) -> {
+                        printUnknownLanguageMessage(file, this@SearchClient.summery)
+                        resultsList.add(unknownLanguageAnalyzer(file))
+                    }
+
+                    else -> {
+                        printSkippingMessage(file, this@SearchClient.summery)
+                    }
+                }
+
+
+            }.toList()
+
+        /*try {
             for (file in Files.walk(Paths.get(directoryPath))
                 .filter { path: Path? -> !path.toString().contains(".git") }
                 .filter { path: Path? ->
@@ -24,7 +57,9 @@ class SearchClient(private val summery: Boolean) {
                         return@filter false
                     }
                 }
+
                 .sorted()
+
                 .collect(Collectors.toList())) {
                 when {
                     isJavaFile(file) -> {
@@ -43,14 +78,14 @@ class SearchClient(private val summery: Boolean) {
                     }
 
                     else -> {
-                            printSkippingMessage(file, this@SearchClient.summery)
+                        printSkippingMessage(file, this@SearchClient.summery)
                     }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
             return null
-        }
+        }*/
         return resultsList
     }
 

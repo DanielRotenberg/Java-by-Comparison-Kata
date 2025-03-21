@@ -7,8 +7,7 @@ import kotlin.math.max
 
 class ResultDataPrinter {
     fun print(data: ResultData): kotlin.String {
-        var language: kotlin.String?
-        language = languageType(data)
+        var language = languageType(data)
         return (data.name
                 + "\t"
                 + language
@@ -24,75 +23,36 @@ class ResultDataPrinter {
                 + data.nImports)
     }
 
-    fun printFileName(data: ResultData, length: Int): kotlin.String {
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(max((length - data.name!!.length).toDouble(), 0.0).toInt(), " ")
-        )
-                + data.name)
-    }
+    fun printFileName(name: kotlin.String, length: Int) = maxLengthOf(name,length)
 
-    fun printLanguage(data: ResultData, length: Int): kotlin.String {
-        val language: kotlin.String
-        if (data.type == 0) language = "Java"
-        else if (data.type == 1) language = "Python"
-        else language = "other"
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(max((length - language.length).toDouble(), 0.0).toInt(), " ")
-        )
-                + language)
-    }
+    fun printLanguage(language: kotlin.String, length: Int) = maxLengthOf(language,length)
 
-    fun printLOC(data: ResultData, length: Int): kotlin.String {
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(max((length - data.LOC.toString().length).toDouble(), 0.0).toInt(), " ")
-        )
-                + data.LOC)
-    }
+    fun printLOC(LOC: Int, length: Int) = maxLengthOf(LOC.toString(),length)
 
-    fun printCommentLOC(data: ResultData, length: Int): kotlin.String {
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(
-                max((length - data.commentLOC.toString().length).toDouble(), 0.0).toInt(), " "
-            )
-        )
-                + data.commentLOC)
-    }
+    fun printCommentLOC(commentLOC: kotlin.String, length: Int) = maxLengthOf(commentLOC.toString(), length)
 
-    fun printNumMethodLOC(data: ResultData, length: Int): kotlin.String {
+    fun printNumMethodLOC(numMethod: Int, length: Int) = maxLengthOf(numMethod.toString(), length)
+
+    fun printNImportsLOC(nImports: Int, length: Int) = maxLengthOf(nImports.toString(),length)
+
+    private fun maxLengthOf(numMethod: kotlin.String, length: Int): kotlin.String {
         return (String.join(
             "",
             Collections.nCopies<kotlin.String?>(
                 max(
-                    (length - data.numMethod.toString().length).toDouble(),
+                    (length - numMethod.length).toDouble(),
                     0.0
                 ).toInt(), " "
             )
         )
-                + data.numMethod)
-    }
-
-    fun printNImportsLOC(data: ResultData, length: Int): kotlin.String {
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(
-                max((length - data.nImports.toString().length).toDouble(), 0.0).toInt(),
-                " "
-            )
-        )
-                + data.nImports)
+                + numMethod)
     }
 }
 
-private fun languageType(
+ fun languageType(
     data: ResultData,
-): kotlin.String {
-    var language: kotlin.String
-    if (data.type == 0) language = "Java"
-    else if (data.type == 1) language = "Python"
-    else language = "other"
-    return language
+) = when (data.type) {
+    0 -> "Java"
+    1 -> "Python"
+    else -> "other"
 }
