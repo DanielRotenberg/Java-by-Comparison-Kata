@@ -28,15 +28,21 @@ object ResultPrinter {
         val stringBuilderForFirstResult = StringBuilder()
         val stringBuilderForSecondResult = StringBuilder()
 
-        appendFileToHeader(stringBuilderForHeader, r1, r2)
+        appendFileToHeader(stringBuilderForHeader, r1.name!!, r2.name!!)
 
         val resultDataPrinter = FileSummaryPrinter()
-        stringBuilderForFirstResult.append(resultDataPrinter.printFileName(r1.name!!, calculateFileNameLength(r1, r2)))
-        stringBuilderForSecondResult.append(resultDataPrinter.printFileName(r2.name!!, calculateFileNameLength(r1, r2)))
+        stringBuilderForFirstResult.append(resultDataPrinter.printFileName(r1.name!!, calculateFileNameLength(
+            r1.name!!,
+            r2.name!!
+        )))
+        stringBuilderForSecondResult.append(resultDataPrinter.printFileName(r2.name!!, calculateFileNameLength(
+            r1.name!!,
+            r2.name!!
+        )))
 
-        appendLanguageToHeader(stringBuilderForHeader, r1, r2)
         val languageR1 = detectLanguageType(r1.type)
         val languageR2 = detectLanguageType(r2.type)
+        appendLanguageToHeader(stringBuilderForHeader,languageR2,languageR2)
 
         stringBuilderForFirstResult.append(resultDataPrinter.printLanguage(
             languageType(r1),
@@ -130,7 +136,7 @@ object ResultPrinter {
         n2: Int,
         type: kotlin.String
     ) {
-
+        val longest = longestLengthOf(n1.toString(),n2.toString(),type)
         stringBuilderForHeader
             .append(
                 String.join(
@@ -171,13 +177,9 @@ object ResultPrinter {
 
     private fun appendLanguageToHeader(
         stringBuilderForHeader: StringBuilder,
-        r1: FileSummary,
-        r2: FileSummary
+        languageR1:kotlin.String,
+        languageR2: kotlin.String,
     ) {
-        val languageR1 = detectLanguageType(r1.type)
-        val languageR2 = detectLanguageType(r2.type)
-
-
         stringBuilderForHeader
             .append(
                 String.join(
@@ -192,24 +194,25 @@ object ResultPrinter {
 
     private fun appendFileToHeader(
         stringBuilderForHeader: StringBuilder,
-        r1: FileSummary,
-        r2: FileSummary
+        name1: kotlin.String,
+        name2: kotlin.String
     ) {
         stringBuilderForHeader
             .append(
                 String.join(
                     "",
                     Collections.nCopies<kotlin.String?>(
-                        max((calculateFileNameLength(r1, r2) - FILE_NAME.length).toDouble(), 0.0).toInt(), " "
+                        max((calculateFileNameLength(name1, name2) - FILE_NAME.length).toDouble(), 0.0).toInt(), " "
                     )
                 )
             )
             .append(FILE_NAME)
     }
 
-    private fun calculateFileNameLength(r1: FileSummary, r2: FileSummary): Int =
+    private fun calculateFileNameLength(name1: kotlin.String, name2: kotlin.String): Int {
         // returns the length of the longest string of the three
-        longestLengthOf(r1.name!!,r2.name!!,FILE_NAME)
+        return longestLengthOf(name1, name2,FILE_NAME)
+    }
 
     private fun calculateLanguageLength(language1: kotlin.String, language2: kotlin.String): Int {
         return longestLengthOf(language1.length.toString(), language2.length.toString(), LANGUAGE)
