@@ -1,6 +1,6 @@
 package com.javabycomparison.kata.printing
 
-import com.javabycomparison.kata.analysis.ResultData
+import com.javabycomparison.kata.analysis.FileSummary
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.String
@@ -9,7 +9,6 @@ import java.nio.file.Paths
 import java.util.*
 import kotlin.Array
 import kotlin.ByteArray
-import kotlin.Throws
 import kotlin.text.toByteArray
 
 class CSVPrinter(outputFile: kotlin.String) {
@@ -20,15 +19,15 @@ class CSVPrinter(outputFile: kotlin.String) {
     }
 
     @Throws(IOException::class)
-    fun writeCSV(overallResult: Array<ResultData?>) {
+    fun writeCSV(overallResult: Array<FileSummary?>) {
         val writer = FileOutputStream(csvFile.toFile())
         writer.write(
             "File Name,Language,Lines of Code,Number of Comments,Number of Methods,Number of Imports\n"
                 .toByteArray()
         )
-        Arrays.stream<ResultData?>(overallResult)
-            .filter { result: ResultData? -> null != result }
-            .map { result: ResultData? ->
+        Arrays.stream<FileSummary?>(overallResult)
+            .filter { result: FileSummary? -> null != result }
+            .map { result: FileSummary? ->
                 (String.join(
                     ",",
                     result!!.name,
@@ -40,9 +39,9 @@ class CSVPrinter(outputFile: kotlin.String) {
                 )
                         + System.lineSeparator())
             }  /*   .map(
-            new Function<ResultData, String>() {
+            new Function<FileSummary, String>() {
               @Override
-              public String apply(ResultData result) {
+              public String apply(FileSummary result) {
                 return String.join(
                         ",",
                         result.name,

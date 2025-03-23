@@ -1,7 +1,7 @@
 package com.javabycomparison.kata.printing
 
-import com.javabycomparison.kata.analysis.ResultData
-import com.javabycomparison.kata.analysis.ResultDataPrinter
+import com.javabycomparison.kata.analysis.FileSummary
+import com.javabycomparison.kata.analysis.FileSummaryPrinter
 import com.javabycomparison.kata.analysis.languageType
 import java.lang.String
 import java.util.*
@@ -20,7 +20,7 @@ object ResultPrinter {
     private const val N_IMPORTS = "  Number of Imports"
 
     @JvmStatic
-    fun printOverallResults(overallResult: Array<ResultData>) {
+    fun printOverallResults(overallResult: Array<FileSummary>) {
         val r1 = overallResult[0]
         val r2 = overallResult[1]
 
@@ -30,7 +30,7 @@ object ResultPrinter {
 
         appendFileToHeader(stringBuilderForHeader, r1, r2)
 
-        val resultDataPrinter = ResultDataPrinter()
+        val resultDataPrinter = FileSummaryPrinter()
         stringBuilderForFirstResult.append(resultDataPrinter.printFileName(r1.name!!, calculateFileNameLength(r1, r2)))
         stringBuilderForSecondResult.append(resultDataPrinter.printFileName(r2.name!!, calculateFileNameLength(r1, r2)))
 
@@ -171,8 +171,8 @@ object ResultPrinter {
 
     private fun appendLanguageToHeader(
         stringBuilderForHeader: StringBuilder,
-        r1: ResultData,
-        r2: ResultData
+        r1: FileSummary,
+        r2: FileSummary
     ) {
         val languageR1 = detectLanguageType(r1.type)
         val languageR2 = detectLanguageType(r2.type)
@@ -183,7 +183,7 @@ object ResultPrinter {
                 String.join(
                     "",
                     Collections.nCopies<kotlin.String?>(
-                        max(( longestLengthOf(languageR1.length, languageR2.length, LANGUAGE) - LANGUAGE.length).toDouble(), 0.0).toInt(), " "
+                        max(( longestLengthOf(languageR1.length.toString(), languageR2.length.toString(), LANGUAGE) - LANGUAGE.length).toDouble(), 0.0).toInt(), " "
                     )
                 )
             )
@@ -192,8 +192,8 @@ object ResultPrinter {
 
     private fun appendFileToHeader(
         stringBuilderForHeader: StringBuilder,
-        r1: ResultData,
-        r2: ResultData
+        r1: FileSummary,
+        r2: FileSummary
     ) {
         stringBuilderForHeader
             .append(
@@ -207,37 +207,30 @@ object ResultPrinter {
             .append(FILE_NAME)
     }
 
-    private fun calculateFileNameLength(r1: ResultData, r2: ResultData): Int =
+    private fun calculateFileNameLength(r1: FileSummary, r2: FileSummary): Int =
         // returns the length of the longest string of the three
         longestLengthOf(r1.name!!,r2.name!!,FILE_NAME)
 
     private fun calculateLanguageLength(language1: kotlin.String, language2: kotlin.String): Int {
-        return longestLengthOf(language1.length, language2.length, LANGUAGE)
+        return longestLengthOf(language1.length.toString(), language2.length.toString(), LANGUAGE)
         // returns the length of the longest string of the three
     }
 
     private fun calculateLOCLength(LOC1: Int, LOC2: Int): Int =
         // returns the length of the longest string of the three
-        longestLengthOf(LOC1, LOC2, LOC)
+        longestLengthOf(LOC1.toString(), LOC2.toString(), LOC)
 
     private fun calculateCommentLOCLength(commentLOC1: Int, commentLOC2: Int): Int =
         // returns the length of the longest string of the three
-        longestLengthOf(commentLOC1, commentLOC2, COMMENT_LOC)
+        longestLengthOf(commentLOC1.toString(), commentLOC2.toString(), COMMENT_LOC)
 
     private fun calculateNumMethodsLength(numMethod1: Int, numMethod2: Int): Int =
         // returns the length of the longest string of the three
-        longestLengthOf(numMethod1, numMethod2, NUM_METHODS)
+        longestLengthOf(numMethod1.toString(), numMethod2.toString(), NUM_METHODS)
 
     private fun calculateNImportsLength(nImports1: Int, nImports2: Int): Int =
         // returns the length of the longest string of the three
-        longestLengthOf(nImports1, nImports2, N_IMPORTS)
-
-    //to-do -> remove this function
-    private fun longestLengthOf(
-        nImports1: Int,
-        nImports2: Int,
-        type: kotlin.String
-    ): Int = longestLengthOf(nImports1.toString(),nImports2.toString(),type)
+        longestLengthOf(nImports1.toString(), nImports2.toString(), N_IMPORTS)
 
     private fun longestLengthOf(
         nImports1: kotlin.String,
@@ -252,3 +245,6 @@ object ResultPrinter {
 }
 
 fun detectLanguageType(type: Int): kotlin.String = if (type == 0) "Java" else "Python"
+
+
+

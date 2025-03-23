@@ -5,7 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 
-fun javaAnalyzer(file: Path?): ResultData? {
+fun javaAnalyzer(file: Path?): FileSummary? {
     fun String.isImport() = startWith("import")
     fun String.isComment() = startWith("//") || startWith("*") || startWith("/*")
 
@@ -14,7 +14,7 @@ fun javaAnalyzer(file: Path?): ResultData? {
     }
     try {
         with(Files.readAllLines(file)) {
-            return ResultData(
+            return FileSummary(
                 0,
                 file.toString(),
                 count(),
@@ -32,13 +32,13 @@ fun javaAnalyzer(file: Path?): ResultData? {
 }
 
 // to-do -> add exception handling for IOException
-fun pythonAnalyzer(file: Path): ResultData {
+fun pythonAnalyzer(file: Path): FileSummary {
     fun String.isImport() = startWith("import") || startWith("from")
     fun String.isComment() = startWith("#")
     fun String.isMethod() = startWith("def")
 
     with(Files.readAllLines(file)) {
-        return ResultData(
+        return FileSummary(
             1,
             file.toString(),
             count(),
@@ -49,13 +49,13 @@ fun pythonAnalyzer(file: Path): ResultData {
     }
 
 }
-fun unknownLanguageAnalyzer(file: Path): ResultData {
+fun unknownLanguageAnalyzer(file: Path): FileSummary {
     try {
         val fileContents = Files.readAllLines(file)
         val lines = fileContents.size
-        return ResultData(2, file.toString(), lines, 0, 0, 0)
+        return FileSummary(2, file.toString(), lines, 0, 0, 0)
     } catch (ioException: IOException) {
-        return ResultData()
+        return FileSummary()
     }
 }
 

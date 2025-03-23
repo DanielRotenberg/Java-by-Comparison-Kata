@@ -5,22 +5,22 @@ import java.util.*
 import kotlin.Int
 import kotlin.math.max
 
-class ResultDataPrinter {
-    fun print(data: ResultData): kotlin.String {
-        var language = languageType(data)
-        return (data.name
+class FileSummaryPrinter {
+    fun print(file: FileSummary): kotlin.String {
+        var language = languageType(file)
+        return (file.name
                 + "\t"
                 + language
                 + "\t"
-                + data.L
+                + file.L
                 + "\t"
-                + data.LOC
+                + file.LOC
                 + "\t"
-                + data.commentLOC
+                + file.commentLOC
                 + "\t"
-                + data.numMethod
+                + file.numMethod
                 + "\t"
-                + data.nImports)
+                + file.nImports)
     }
 
     fun printFileName(name: kotlin.String, length: Int) = maxLengthOf(name,length)
@@ -50,7 +50,7 @@ class ResultDataPrinter {
 }
 
  fun languageType(
-    data: ResultData,
+     data: FileSummary,
 ) = when (data.type) {
     0 -> "Java"
     1 -> "Python"

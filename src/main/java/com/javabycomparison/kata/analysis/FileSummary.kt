@@ -2,7 +2,7 @@ package com.javabycomparison.kata.analysis
 
 import java.util.*
 
-class ResultData {
+class FileSummary {
     @JvmField
     var type: Int = 0
     @JvmField
@@ -26,19 +26,13 @@ class ResultData {
         this.nImports = nImports
     }
 
-    /*
-  public ResultData(boolean java){
-      this.javaFile = java;
-
-  }
-  */
     constructor()
 
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
 
         if (o == null || javaClass != o.javaClass) return false
-        val that = o as ResultData
+        val that = o as FileSummary
         return type == that.type && L == that.L && LOC == that.LOC && commentLOC == that.commentLOC && numMethod == that.numMethod && nImports == that.nImports && name == that.name
     }
 
@@ -47,7 +41,7 @@ class ResultData {
     }
 
     override fun toString(): String {
-        return StringJoiner(", ", ResultData::class.java.getSimpleName() + "[", "]")
+        return StringJoiner(", ", FileSummary::class.java.getSimpleName() + "[", "]")
             .add("type=" + type)
             .add("name='" + name + "'")
             .add("L=" + L)

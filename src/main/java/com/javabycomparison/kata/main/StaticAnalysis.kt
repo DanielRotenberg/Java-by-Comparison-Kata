@@ -1,7 +1,7 @@
 package com.javabycomparison.kata.main
 
-import com.javabycomparison.kata.analysis.ResultData
-import com.javabycomparison.kata.analysis.ResultDataPrinter
+import com.javabycomparison.kata.analysis.FileSummary
+import com.javabycomparison.kata.analysis.FileSummaryPrinter
 import com.javabycomparison.kata.printing.CSVPrinter
 import com.javabycomparison.kata.printing.ResultPrinter
 import com.javabycomparison.kata.search.SearchClient
@@ -9,8 +9,8 @@ import java.io.IOException
 import java.util.*
 
 class StaticAnalysis {
-    private fun run(directoryPath: String, smry: Boolean): Array<ResultData?>? {
-        val results: LinkedList<ResultData>? = SearchClient(smry).collectAllFiles(directoryPath) as LinkedList<ResultData>?
+    private fun run(directoryPath: String, smry: Boolean): Array<FileSummary?>? {
+        val results: LinkedList<FileSummary>? = SearchClient(smry).collectAllFiles(directoryPath) as LinkedList<FileSummary>?
         if (results != null) {
             if (results.size != 0) {
                 var javaLOC = 0
@@ -32,7 +32,7 @@ class StaticAnalysis {
                 while (l < results.size) {
                     val resultData = results.get(l)
                     if (!smry) {
-                        println(ResultDataPrinter().print(resultData))
+                        println(FileSummaryPrinter().print(resultData))
                     }
                     if (resultData.type == 0) {
                         javaLOC += resultData.LOC
@@ -52,13 +52,13 @@ class StaticAnalysis {
                     }
                     l = l + 1
                 }
-                return arrayOf<ResultData>(
-                    ResultData(0, "Overall Java", javaLOC, javaCommentLOC, javaNumMethod, javanImports),
-                    ResultData(1, "Overall Python", pyLOC, pyCommentLOC, pyNumMethod, pynImports),
-                    ResultData(2, "Overall Other", LOC, commentLOC, numMethod, nImports),
-                ) as Array<ResultData?>?
+                return arrayOf<FileSummary>(
+                    FileSummary(0, "Overall Java", javaLOC, javaCommentLOC, javaNumMethod, javanImports),
+                    FileSummary(1, "Overall Python", pyLOC, pyCommentLOC, pyNumMethod, pynImports),
+                    FileSummary(2, "Overall Other", LOC, commentLOC, numMethod, nImports),
+                ) as Array<FileSummary?>?
             } else {
-                return arrayOf<ResultData>(ResultData()) as Array<ResultData?>?
+                return arrayOf<FileSummary>(FileSummary()) as Array<FileSummary?>?
             }
         }
         System.err.println("There was a problem with the result!")
@@ -76,7 +76,7 @@ class StaticAnalysis {
             val analyzer = StaticAnalysis()
             val overallResult = analyzer.run(if (p == null) "./src/" else p, smry)
             if (overallResult != null) {
-                ResultPrinter.printOverallResults(overallResult as Array<ResultData>)
+                ResultPrinter.printOverallResults(overallResult as Array<FileSummary>)
                 try {
                     CSVPrinter("output.csv").writeCSV(overallResult)
                 } catch (e: IOException) {

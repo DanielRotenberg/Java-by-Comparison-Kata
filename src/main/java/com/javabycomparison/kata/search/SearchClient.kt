@@ -1,6 +1,6 @@
 package com.javabycomparison.kata.search
 
-import com.javabycomparison.kata.analysis.ResultData
+import com.javabycomparison.kata.analysis.FileSummary
 import com.javabycomparison.kata.analysis.javaAnalyzer
 import com.javabycomparison.kata.analysis.pythonAnalyzer
 import com.javabycomparison.kata.analysis.unknownLanguageAnalyzer
@@ -10,9 +10,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-class SearchClient(private val summery: Boolean) {
-    fun collectAllFiles(directoryPath: String): LinkedList<ResultData?>? {
-        val resultsList = LinkedList<ResultData?>()
+class SearchClient(private val summary: Boolean) {
+    fun collectAllFiles(directoryPath: String): LinkedList<FileSummary?>? {
+        val resultsList = LinkedList<FileSummary?>()
         val file = Paths.get(directoryPath).toFile()
         // to-do - deal with exceptions
         file.walk().map { it.toPath() }.filter { path: Path? -> !path.toString().contains(".git") }
@@ -25,22 +25,22 @@ class SearchClient(private val summery: Boolean) {
             }.onEach { file ->
                 when {
                     isJavaFile(file) -> {
-                        printJavaMessage(file, this@SearchClient.summery)
+                        printJavaMessage(file, this@SearchClient.summary)
                         resultsList.add(javaAnalyzer(file))
                     }
 
                     isPythonFile(file) -> {
-                        printPythonMessage(file, this@SearchClient.summery)
+                        printPythonMessage(file, this@SearchClient.summary)
                         resultsList.add(pythonAnalyzer(file))
                     }
 
                     !Files.isDirectory(file) -> {
-                        printUnknownLanguageMessage(file, this@SearchClient.summery)
+                        printUnknownLanguageMessage(file, this@SearchClient.summary)
                         resultsList.add(unknownLanguageAnalyzer(file))
                     }
 
                     else -> {
-                        printSkippingMessage(file, this@SearchClient.summery)
+                        printSkippingMessage(file, this@SearchClient.summary)
                     }
                 }
 

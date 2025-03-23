@@ -7,7 +7,7 @@ import java.io.IOException
 import java.nio.file.Paths
 
 internal class PythonAnalyzerTests {
-    private var pythonResult: ResultData? = null
+    private var pythonResult: FileSummary? = null
 
     @BeforeEach
     @Throws(IOException::class)
@@ -20,7 +20,7 @@ internal class PythonAnalyzerTests {
     fun analyzePythonFile() {
         Assertions.assertEquals(
             pythonResult,
-            ResultData(1, "./src/main/resources/python_files/function.py", 16, 3, 3, 0)
+            FileSummary(1, "./src/main/resources/python_files/function.py", 16, 3, 3, 0)
         )
     }
 

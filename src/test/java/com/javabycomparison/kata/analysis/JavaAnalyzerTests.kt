@@ -22,7 +22,7 @@ internal class JavaAnalyzerTests {
     @Test
     fun analyzeJavaFizzBuzz() {
         Assertions.assertEquals(
-            ResultData(0, "./src/main/resources/java_files/FizzBuzz.java", 15, 4, 0, 0),
+            FileSummary(0, "./src/main/resources/java_files/FizzBuzz.java", 15, 4, 0, 0),
             javaAnalyzer(Paths.get("./src/main/resources/java_files/FizzBuzz.java"))
         )
     }
