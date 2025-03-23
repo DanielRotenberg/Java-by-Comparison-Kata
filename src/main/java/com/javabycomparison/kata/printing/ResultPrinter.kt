@@ -31,27 +31,39 @@ object ResultPrinter {
         appendFileToHeader(stringBuilderForHeader, r1.name!!, r2.name!!)
 
         val resultDataPrinter = FileSummaryPrinter()
-        stringBuilderForFirstResult.append(resultDataPrinter.printFileName(r1.name!!, calculateFileNameLength(
-            r1.name!!,
-            r2.name!!
-        )))
-        stringBuilderForSecondResult.append(resultDataPrinter.printFileName(r2.name!!, calculateFileNameLength(
-            r1.name!!,
-            r2.name!!
-        )))
+        stringBuilderForFirstResult.append(
+            resultDataPrinter.printFileName(
+                r1.name!!, calculateFileNameLength(
+                    r1.name!!,
+                    r2.name!!
+                )
+            )
+        )
+        stringBuilderForSecondResult.append(
+            resultDataPrinter.printFileName(
+                r2.name!!, calculateFileNameLength(
+                    r1.name!!,
+                    r2.name!!
+                )
+            )
+        )
 
         val languageR1 = detectLanguageType(r1.type)
         val languageR2 = detectLanguageType(r2.type)
-        appendLanguageToHeader(stringBuilderForHeader,languageR2,languageR2)
+        appendLanguageToHeader(stringBuilderForHeader, languageR2, languageR2)
 
-        stringBuilderForFirstResult.append(resultDataPrinter.printLanguage(
-            languageType(r1),
-            calculateLanguageLength(languageR1, languageR2)
-        ))
-        stringBuilderForSecondResult.append(resultDataPrinter.printLanguage(
-            languageType(r2),
-            calculateLanguageLength(languageR1, languageR2)
-        ))
+        stringBuilderForFirstResult.append(
+            resultDataPrinter.printLanguage(
+                languageType(r1),
+                calculateLanguageLength(languageR1, languageR2)
+            )
+        )
+        stringBuilderForSecondResult.append(
+            resultDataPrinter.printLanguage(
+                languageType(r2),
+                calculateLanguageLength(languageR1, languageR2)
+            )
+        )
 
         appendLOCToHeader(stringBuilderForHeader, r1.LOC, r2.LOC, this@ResultPrinter.LOC)
 
@@ -88,14 +100,18 @@ object ResultPrinter {
 
         appendImportsToHeader(stringBuilderForHeader, r1.nImports, r2.nImports, this@ResultPrinter.N_IMPORTS)
 
-        stringBuilderForFirstResult.append(resultDataPrinter.printNImportsLOC(
-            r1.nImports,
-            calculateNImportsLength(r1.nImports, r2.nImports)
-        ))
-        stringBuilderForSecondResult.append(resultDataPrinter.printNImportsLOC(
-            r2.nImports,
-            calculateNImportsLength(r1.nImports, r2.nImports)
-        ))
+        stringBuilderForFirstResult.append(
+            resultDataPrinter.printNImportsLOC(
+                r1.nImports,
+                calculateNImportsLength(r1.nImports, r2.nImports)
+            )
+        )
+        stringBuilderForSecondResult.append(
+            resultDataPrinter.printNImportsLOC(
+                r2.nImports,
+                calculateNImportsLength(r1.nImports, r2.nImports)
+            )
+        )
 
         println(stringBuilderForHeader.toString())
         println(stringBuilderForFirstResult.toString())
@@ -108,7 +124,7 @@ object ResultPrinter {
         nImports2: Int,
         type: kotlin.String
     ) {
-        appendToHeader(stringBuilderForHeader, nImports1, nImports2, type)
+        appendToHeader(stringBuilderForHeader, nImports1.toString(), nImports2.toString(), type)
     }
 
     private fun appendNumMethodsToHeader(
@@ -117,7 +133,7 @@ object ResultPrinter {
         numMethod2: Int,
         type: kotlin.String
     ) {
-        appendToHeader(stringBuilderForHeader, numMethod1, numMethod2, type)
+        appendToHeader(stringBuilderForHeader, numMethod1.toString(), numMethod2.toString(), type)
     }
 
     private fun appendCommentLOCToHeader(
@@ -127,23 +143,23 @@ object ResultPrinter {
         commentLOC: kotlin.String
     ) {
 
-        appendToHeader(stringBuilderForHeader, commentLOC1, commentLOC2, commentLOC)
+        appendToHeader(stringBuilderForHeader, commentLOC1.toString(), commentLOC2.toString(), commentLOC)
     }
 
     private fun appendToHeader(
         stringBuilderForHeader: StringBuilder,
-        n1: Int,
-        n2: Int,
+        n1: kotlin.String,
+        n2: kotlin.String,
         type: kotlin.String
     ) {
-        val longest = longestLengthOf(n1.toString(),n2.toString(),type)
+
         stringBuilderForHeader
             .append(
                 String.join(
                     "",
                     Collections.nCopies<kotlin.String?>(
                         max(
-                            (calculateNImportsLength(n1, n2) - type.length).toDouble(),
+                            (longestLengthOf(n1, n2, type) - type.length).toDouble(),
                             0.0
                         ).toInt(), " "
                     )
@@ -159,37 +175,16 @@ object ResultPrinter {
         LOC2: Int,
         type: kotlin.String
     ) {
-//        appendToHeader(stringBuilderForHeader, LOC1, LOC2, type)
-               stringBuilderForHeader
-                   .append(
-                       String.join(
-                           "",
-                           Collections.nCopies<kotlin.String?>(
-                               max(
-                                   (calculateLOCLength(LOC1, LOC2) - type.length).toDouble(),
-                                   0.0
-                               ).toInt(), " "
-                           )
-                       )
-                   )
-                   .append(type)
+        appendToHeader(stringBuilderForHeader, LOC1.toString(), LOC2.toString(), type)
     }
 
     private fun appendLanguageToHeader(
         stringBuilderForHeader: StringBuilder,
-        languageR1:kotlin.String,
+        languageR1: kotlin.String,
         languageR2: kotlin.String,
     ) {
-        stringBuilderForHeader
-            .append(
-                String.join(
-                    "",
-                    Collections.nCopies<kotlin.String?>(
-                        max(( longestLengthOf(languageR1.length.toString(), languageR2.length.toString(), LANGUAGE) - LANGUAGE.length).toDouble(), 0.0).toInt(), " "
-                    )
-                )
-            )
-            .append(LANGUAGE)
+        appendToHeader(stringBuilderForHeader, languageR1, languageR2, LANGUAGE)
+
     }
 
     private fun appendFileToHeader(
@@ -197,21 +192,12 @@ object ResultPrinter {
         name1: kotlin.String,
         name2: kotlin.String
     ) {
-        stringBuilderForHeader
-            .append(
-                String.join(
-                    "",
-                    Collections.nCopies<kotlin.String?>(
-                        max((calculateFileNameLength(name1, name2) - FILE_NAME.length).toDouble(), 0.0).toInt(), " "
-                    )
-                )
-            )
-            .append(FILE_NAME)
+        appendToHeader(stringBuilderForHeader, name1, name2, FILE_NAME)
     }
 
     private fun calculateFileNameLength(name1: kotlin.String, name2: kotlin.String): Int {
         // returns the length of the longest string of the three
-        return longestLengthOf(name1, name2,FILE_NAME)
+        return longestLengthOf(name1, name2, FILE_NAME)
     }
 
     private fun calculateLanguageLength(language1: kotlin.String, language2: kotlin.String): Int {
