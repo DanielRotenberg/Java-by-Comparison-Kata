@@ -1,9 +1,7 @@
 package com.javabycomparison.kata.printing
 
 import com.javabycomparison.kata.analysis.FileSummary
-import com.javabycomparison.kata.analysis.FileSummaryPrinter
 import com.javabycomparison.kata.analysis.languageType
-import com.javabycomparison.kata.analysis.maxLengthOf
 import java.lang.String
 import java.util.*
 import kotlin.Array
@@ -30,63 +28,33 @@ object ResultPrinter {
         val stringBuilderForSecondResult = StringBuilder()
 
         appendFileToHeader(stringBuilderForHeader, r1.name!!, r2.name!!)
+        appendToBody(stringBuilderForFirstResult,r1.name!!,r2.name!!,FILE_NAME)
+        appendToBody(stringBuilderForSecondResult,r2.name!!,r1.name!!,FILE_NAME)
 
-        val resultDataPrinter = FileSummaryPrinter()
-//        appendToBuilder(stringBuilderForFirstResult,r1.name!!,r2.name!!,FILE_NAME)
-        stringBuilderForFirstResult.append(
-            maxLengthOf(r1.name!!, longestLengthOf(r1.name!!,r2.name!!,FILE_NAME))
-        )
-        stringBuilderForSecondResult.append(
-            maxLengthOf(r2.name!!, longestLengthOf(r1.name!!,r2.name!!,FILE_NAME))
-        )
 
-        val languageR1 = detectLanguageType(r1.type)
-        val languageR2 = detectLanguageType(r2.type)
+
+        val languageR1 = languageType(r1.type)
+        val languageR2 = languageType(r2.type)
         appendLanguageToHeader(stringBuilderForHeader, languageR2, languageR2)
-
-        stringBuilderForFirstResult.append(
-            maxLengthOf(languageType(r1), longestLengthOf(languageR1,languageR2,LANGUAGE))
-        )
-        stringBuilderForSecondResult.append(
-            maxLengthOf(languageType(r2), longestLengthOf(languageR1,languageR2,LANGUAGE))
-        )
+        appendToBody(stringBuilderForFirstResult,languageR1,languageR2,LANGUAGE)
+        appendToBody(stringBuilderForSecondResult,languageR2,languageR1,LANGUAGE)
 
         appendLOCToHeader(stringBuilderForHeader, r1.LOC, r2.LOC, this@ResultPrinter.LOC)
-
-        stringBuilderForFirstResult.append(
-            maxLengthOf(r1.LOC.toString(), longestLengthOf(r1.LOC.toString(),r2.LOC.toString(),LOC))
-        )
-        stringBuilderForSecondResult.append(
-            maxLengthOf(r2.LOC.toString(), longestLengthOf(r1.LOC.toString(),r2.LOC.toString(),LOC))
-        )
+        appendToBody(stringBuilderForFirstResult,r1.LOC.toString(),r2.LOC.toString(),LOC)
+        appendToBody(stringBuilderForSecondResult,r2.LOC.toString(),r1.LOC.toString(),LOC)
 
         appendCommentLOCToHeader(stringBuilderForHeader, r1.commentLOC, r2.commentLOC, this@ResultPrinter.COMMENT_LOC)
-
-        stringBuilderForFirstResult.append(
-            maxLengthOf(r1.commentLOC.toString(), longestLengthOf(r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC))
-        )
-        stringBuilderForSecondResult.append(
-            maxLengthOf(r2.commentLOC.toString(), longestLengthOf(r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC))
-        )
+        appendToBody(stringBuilderForFirstResult,r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC)
+        appendToBody(stringBuilderForSecondResult,r2.commentLOC.toString(),r1.commentLOC.toString(),COMMENT_LOC)
 
         appendNumMethodsToHeader(stringBuilderForHeader, r1.numMethod, r2.numMethod, this@ResultPrinter.NUM_METHODS)
-
-        stringBuilderForFirstResult.append(
-            maxLengthOf(r1.numMethod.toString(), longestLengthOf(r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS))
-        )
-        stringBuilderForSecondResult.append(
-            maxLengthOf(r2.numMethod.toString(), longestLengthOf(r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS))
-        )
+        appendToBody(stringBuilderForFirstResult,r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS)
+        appendToBody(stringBuilderForSecondResult,r2.numMethod.toString(),r1.numMethod.toString(),NUM_METHODS)
 
         appendImportsToHeader(stringBuilderForHeader, r1.nImports, r2.nImports, this@ResultPrinter.N_IMPORTS)
+        appendToBody(stringBuilderForFirstResult,r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS)
+        appendToBody(stringBuilderForSecondResult,r2.nImports.toString(),r1.nImports.toString(),N_IMPORTS)
 
-        stringBuilderForFirstResult.append(
-            maxLengthOf(r1.nImports.toString(), longestLengthOf(r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS))
-        )
-
-        stringBuilderForSecondResult.append(
-            maxLengthOf(r2.nImports.toString(), longestLengthOf(r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS))
-        )
 
         println(stringBuilderForHeader.toString())
         println(stringBuilderForFirstResult.toString())
@@ -144,6 +112,11 @@ object ResultPrinter {
 
     }
 
+    fun appendToBody(builder: StringBuilder,param1:kotlin.String,param2: kotlin.String,type: kotlin.String){
+        builder.append(
+            maxLengthOf(param1, longestLengthOf(param1,param2,type))
+        )
+    }
 
 
 
@@ -242,5 +215,15 @@ object ResultPrinter {
 fun detectLanguageType(type: Int): kotlin.String = if (type == 0) "Java" else "Python"
 
 
-
-
+fun maxLengthOf(numMethod: kotlin.String, length: Int): kotlin.String {
+    return (String.join(
+        "",
+        Collections.nCopies<kotlin.String?>(
+            max(
+                (length - numMethod.length).toDouble(),
+                0.0
+            ).toInt(), " "
+        )
+    )
+            + numMethod)
+}
