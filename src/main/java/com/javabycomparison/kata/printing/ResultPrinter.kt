@@ -3,6 +3,7 @@ package com.javabycomparison.kata.printing
 import com.javabycomparison.kata.analysis.FileSummary
 import com.javabycomparison.kata.analysis.FileSummaryPrinter
 import com.javabycomparison.kata.analysis.languageType
+import com.javabycomparison.kata.analysis.maxLengthOf
 import java.lang.String
 import java.util.*
 import kotlin.Array
@@ -31,21 +32,12 @@ object ResultPrinter {
         appendFileToHeader(stringBuilderForHeader, r1.name!!, r2.name!!)
 
         val resultDataPrinter = FileSummaryPrinter()
+//        appendToBuilder(stringBuilderForFirstResult,r1.name!!,r2.name!!,FILE_NAME)
         stringBuilderForFirstResult.append(
-            resultDataPrinter.printFileName(
-                r1.name!!, calculateFileNameLength(
-                    r1.name!!,
-                    r2.name!!
-                )
-            )
+            maxLengthOf(r1.name!!, longestLengthOf(r1.name!!,r2.name!!,FILE_NAME))
         )
         stringBuilderForSecondResult.append(
-            resultDataPrinter.printFileName(
-                r2.name!!, calculateFileNameLength(
-                    r1.name!!,
-                    r2.name!!
-                )
-            )
+            maxLengthOf(r2.name!!, longestLengthOf(r1.name!!,r2.name!!,FILE_NAME))
         )
 
         val languageR1 = detectLanguageType(r1.type)
@@ -53,64 +45,47 @@ object ResultPrinter {
         appendLanguageToHeader(stringBuilderForHeader, languageR2, languageR2)
 
         stringBuilderForFirstResult.append(
-            resultDataPrinter.printLanguage(
-                languageType(r1),
-                calculateLanguageLength(languageR1, languageR2)
-            )
+            maxLengthOf(languageType(r1), longestLengthOf(languageR1,languageR2,LANGUAGE))
         )
         stringBuilderForSecondResult.append(
-            resultDataPrinter.printLanguage(
-                languageType(r2),
-                calculateLanguageLength(languageR1, languageR2)
-            )
+            maxLengthOf(languageType(r2), longestLengthOf(languageR1,languageR2,LANGUAGE))
         )
 
         appendLOCToHeader(stringBuilderForHeader, r1.LOC, r2.LOC, this@ResultPrinter.LOC)
 
-        stringBuilderForFirstResult.append(resultDataPrinter.printLOC(r1.LOC, calculateLOCLength(r1.LOC, r2.LOC)))
-        stringBuilderForSecondResult.append(resultDataPrinter.printLOC(r2.LOC, calculateLOCLength(r1.LOC, r2.LOC)))
+        stringBuilderForFirstResult.append(
+            maxLengthOf(r1.LOC.toString(), longestLengthOf(r1.LOC.toString(),r2.LOC.toString(),LOC))
+        )
+        stringBuilderForSecondResult.append(
+            maxLengthOf(r2.LOC.toString(), longestLengthOf(r1.LOC.toString(),r2.LOC.toString(),LOC))
+        )
 
         appendCommentLOCToHeader(stringBuilderForHeader, r1.commentLOC, r2.commentLOC, this@ResultPrinter.COMMENT_LOC)
 
         stringBuilderForFirstResult.append(
-            resultDataPrinter.printCommentLOC(
-                r1.commentLOC.toString(), calculateCommentLOCLength(
-                    r1.commentLOC,
-                    r2.commentLOC
-                )
-            )
+            maxLengthOf(r1.commentLOC.toString(), longestLengthOf(r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC))
         )
         stringBuilderForSecondResult.append(
-            resultDataPrinter.printCommentLOC(
-                r2.commentLOC.toString(), calculateCommentLOCLength(
-                    r1.commentLOC,
-                    r2.commentLOC
-                )
-            )
+            maxLengthOf(r2.commentLOC.toString(), longestLengthOf(r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC))
         )
 
         appendNumMethodsToHeader(stringBuilderForHeader, r1.numMethod, r2.numMethod, this@ResultPrinter.NUM_METHODS)
 
         stringBuilderForFirstResult.append(
-            resultDataPrinter.printNumMethodLOC(r1.numMethod, calculateNumMethodsLength(r1.numMethod, r2.numMethod))
+            maxLengthOf(r1.numMethod.toString(), longestLengthOf(r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS))
         )
         stringBuilderForSecondResult.append(
-            resultDataPrinter.printNumMethodLOC(r2.numMethod, calculateNumMethodsLength(r1.numMethod, r2.numMethod))
+            maxLengthOf(r2.numMethod.toString(), longestLengthOf(r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS))
         )
 
         appendImportsToHeader(stringBuilderForHeader, r1.nImports, r2.nImports, this@ResultPrinter.N_IMPORTS)
 
         stringBuilderForFirstResult.append(
-            resultDataPrinter.printNImportsLOC(
-                r1.nImports,
-                calculateNImportsLength(r1.nImports, r2.nImports)
-            )
+            maxLengthOf(r1.nImports.toString(), longestLengthOf(r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS))
         )
+
         stringBuilderForSecondResult.append(
-            resultDataPrinter.printNImportsLOC(
-                r2.nImports,
-                calculateNImportsLength(r1.nImports, r2.nImports)
-            )
+            maxLengthOf(r2.nImports.toString(), longestLengthOf(r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS))
         )
 
         println(stringBuilderForHeader.toString())
@@ -168,6 +143,9 @@ object ResultPrinter {
             .append(type)
 
     }
+
+
+
 
     private fun appendLOCToHeader(
         stringBuilderForHeader: StringBuilder,
@@ -231,9 +209,38 @@ object ResultPrinter {
             type.length.toDouble()
         ).toInt()
     }
+
+    private fun appendToBuilder(
+        stringBuilder: StringBuilder,
+        n1: kotlin.String,
+        n2: kotlin.String,
+        type: kotlin.String
+    ) {
+
+        stringBuilder
+            .append(
+                String.join(
+                    "",
+                    Collections.nCopies<kotlin.String?>(
+                        max(
+                            (longestLengthOf(n1, n2, type) - type.length).toDouble(),
+                            0.0
+                        ).toInt(), " "
+                    )
+                )
+            )
+            .append(type)
+
+    }
+
+
+
+
+
 }
 
 fun detectLanguageType(type: Int): kotlin.String = if (type == 0) "Java" else "Python"
+
 
 
 

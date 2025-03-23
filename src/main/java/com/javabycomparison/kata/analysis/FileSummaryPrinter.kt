@@ -23,7 +23,7 @@ class FileSummaryPrinter {
                 + file.nImports)
     }
 
-    fun printFileName(name: kotlin.String, length: Int) = maxLengthOf(name,length)
+ /*   fun printFileName(name: kotlin.String, length: Int) = maxLengthOf(name,length)
 
     fun printLanguage(language: kotlin.String, length: Int) = maxLengthOf(language,length)
 
@@ -33,20 +33,9 @@ class FileSummaryPrinter {
 
     fun printNumMethodLOC(numMethod: Int, length: Int) = maxLengthOf(numMethod.toString(), length)
 
-    fun printNImportsLOC(nImports: Int, length: Int) = maxLengthOf(nImports.toString(),length)
+    fun printNImportsLOC(nImports: Int, length: Int) = maxLengthOf(nImports.toString(),length)*/
 
-    private fun maxLengthOf(numMethod: kotlin.String, length: Int): kotlin.String {
-        return (String.join(
-            "",
-            Collections.nCopies<kotlin.String?>(
-                max(
-                    (length - numMethod.length).toDouble(),
-                    0.0
-                ).toInt(), " "
-            )
-        )
-                + numMethod)
-    }
+
 }
 
  fun languageType(
@@ -55,4 +44,17 @@ class FileSummaryPrinter {
     0 -> "Java"
     1 -> "Python"
     else -> "other"
+}
+
+fun maxLengthOf(numMethod: kotlin.String, length: Int): kotlin.String {
+    return (String.join(
+        "",
+        Collections.nCopies<kotlin.String?>(
+            max(
+                (length - numMethod.length).toDouble(),
+                0.0
+            ).toInt(), " "
+        )
+    )
+            + numMethod)
 }
