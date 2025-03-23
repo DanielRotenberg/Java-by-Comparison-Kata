@@ -27,7 +27,7 @@ object ResultPrinter {
         val stringBuilderForFirstResult = StringBuilder()
         val stringBuilderForSecondResult = StringBuilder()
 
-        appendFileToHeader(stringBuilderForHeader, r1.name!!, r2.name!!)
+        appendToHeader(stringBuilderForHeader, r1.name!!, r2.name!!, FILE_NAME)
         appendToBody(stringBuilderForFirstResult,r1.name!!,r2.name!!,FILE_NAME)
         appendToBody(stringBuilderForSecondResult,r2.name!!,r1.name!!,FILE_NAME)
 
@@ -35,23 +35,23 @@ object ResultPrinter {
 
         val languageR1 = languageType(r1.type)
         val languageR2 = languageType(r2.type)
-        appendLanguageToHeader(stringBuilderForHeader, languageR2, languageR2)
+        appendToHeader(stringBuilderForHeader, languageR2, languageR2, LANGUAGE)
         appendToBody(stringBuilderForFirstResult,languageR1,languageR2,LANGUAGE)
         appendToBody(stringBuilderForSecondResult,languageR2,languageR1,LANGUAGE)
 
-        appendLOCToHeader(stringBuilderForHeader, r1.LOC, r2.LOC, this@ResultPrinter.LOC)
+        appendToHeader(stringBuilderForHeader, r1.LOC.toString(), r2.LOC.toString(), LOC)
         appendToBody(stringBuilderForFirstResult,r1.LOC.toString(),r2.LOC.toString(),LOC)
         appendToBody(stringBuilderForSecondResult,r2.LOC.toString(),r1.LOC.toString(),LOC)
 
-        appendCommentLOCToHeader(stringBuilderForHeader, r1.commentLOC, r2.commentLOC, this@ResultPrinter.COMMENT_LOC)
+        appendToHeader(stringBuilderForHeader, r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC)
         appendToBody(stringBuilderForFirstResult,r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC)
         appendToBody(stringBuilderForSecondResult,r2.commentLOC.toString(),r1.commentLOC.toString(),COMMENT_LOC)
 
-        appendNumMethodsToHeader(stringBuilderForHeader, r1.numMethod, r2.numMethod, this@ResultPrinter.NUM_METHODS)
+        appendToHeader(stringBuilderForHeader, r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS)
         appendToBody(stringBuilderForFirstResult,r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS)
         appendToBody(stringBuilderForSecondResult,r2.numMethod.toString(),r1.numMethod.toString(),NUM_METHODS)
 
-        appendImportsToHeader(stringBuilderForHeader, r1.nImports, r2.nImports, this@ResultPrinter.N_IMPORTS)
+        appendToHeader(stringBuilderForHeader, r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS)
         appendToBody(stringBuilderForFirstResult,r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS)
         appendToBody(stringBuilderForSecondResult,r2.nImports.toString(),r1.nImports.toString(),N_IMPORTS)
 
@@ -59,34 +59,6 @@ object ResultPrinter {
         println(stringBuilderForHeader.toString())
         println(stringBuilderForFirstResult.toString())
         println(stringBuilderForSecondResult.toString())
-    }
-
-    private fun appendImportsToHeader(
-        stringBuilderForHeader: StringBuilder,
-        nImports1: Int,
-        nImports2: Int,
-        type: kotlin.String
-    ) {
-        appendToHeader(stringBuilderForHeader, nImports1.toString(), nImports2.toString(), type)
-    }
-
-    private fun appendNumMethodsToHeader(
-        stringBuilderForHeader: StringBuilder,
-        numMethod1: Int,
-        numMethod2: Int,
-        type: kotlin.String
-    ) {
-        appendToHeader(stringBuilderForHeader, numMethod1.toString(), numMethod2.toString(), type)
-    }
-
-    private fun appendCommentLOCToHeader(
-        stringBuilderForHeader: StringBuilder,
-        commentLOC1: Int,
-        commentLOC2: Int,
-        commentLOC: kotlin.String
-    ) {
-
-        appendToHeader(stringBuilderForHeader, commentLOC1.toString(), commentLOC2.toString(), commentLOC)
     }
 
     private fun appendToHeader(
@@ -118,33 +90,6 @@ object ResultPrinter {
         )
     }
 
-
-
-    private fun appendLOCToHeader(
-        stringBuilderForHeader: StringBuilder,
-        LOC1: Int,
-        LOC2: Int,
-        type: kotlin.String
-    ) {
-        appendToHeader(stringBuilderForHeader, LOC1.toString(), LOC2.toString(), type)
-    }
-
-    private fun appendLanguageToHeader(
-        stringBuilderForHeader: StringBuilder,
-        languageR1: kotlin.String,
-        languageR2: kotlin.String,
-    ) {
-        appendToHeader(stringBuilderForHeader, languageR1, languageR2, LANGUAGE)
-
-    }
-
-    private fun appendFileToHeader(
-        stringBuilderForHeader: StringBuilder,
-        name1: kotlin.String,
-        name2: kotlin.String
-    ) {
-        appendToHeader(stringBuilderForHeader, name1, name2, FILE_NAME)
-    }
 
     private fun calculateFileNameLength(name1: kotlin.String, name2: kotlin.String): Int {
         // returns the length of the longest string of the three
