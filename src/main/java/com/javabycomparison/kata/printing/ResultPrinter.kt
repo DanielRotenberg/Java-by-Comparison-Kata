@@ -24,15 +24,15 @@ object ResultPrinter {
 
         println(headers(r1, r2))
 
-        println(body(r1,r2))
+        println(body(r1, r2))
 
-        println(body(r2,r1))
+        println(body(r2, r1))
     }
 
     private fun headers(r1: FileSummary, r2: FileSummary): String {
         val languageR1 = languageType(r1.type)
         val languageR2 = languageType(r2.type)
-      return  buildString {
+        return buildString {
             appendTo(r1.name!!, r2.name!!, FILE_NAME, FILE_NAME)
             appendTo(languageR1, languageR2, LANGUAGE, LANGUAGE)
             appendTo(r1.LOC.toString(), r2.LOC.toString(), LOC, LOC)
@@ -41,6 +41,26 @@ object ResultPrinter {
             appendTo(r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS, N_IMPORTS)
         }
     }
+
+ /*
+  to-do -> think of a way to reduce duplication between header and body code
+  fun buildSummary(
+        r1: FileSummary,
+        r2: FileSummary,
+        languageR1: String,
+        languageR2: String,
+        appendLast: String
+    ): String {
+        return buildString {
+            appendTo(r1.name!!, r2.name!!, FILE_NAME, appendLast)
+            appendTo(languageR1, languageR2, LANGUAGE, appendLast)
+            appendTo(r1.LOC.toString(), r2.LOC.toString(), LOC, appendLast)
+            appendTo(r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC,appendLast)
+            appendTo(r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS, appendLast)
+            appendTo(r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS, appendLast)
+        }
+    }*/
+
 
     private fun body(r1: FileSummary, r2: FileSummary): String {
         val languageR1 = languageType(r1.type)
@@ -54,7 +74,6 @@ object ResultPrinter {
             appendTo(r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS, r1.nImports.toString())
         }
     }
-
 
 
     fun StringBuilder.appendTo(
