@@ -4,6 +4,7 @@ import com.javabycomparison.kata.analysis.FileSummary
 import com.javabycomparison.kata.analysis.languageType
 import java.lang.String
 import java.util.*
+import java.util.Collections.nCopies
 import kotlin.Array
 import kotlin.Int
 import kotlin.math.max
@@ -23,43 +24,92 @@ object ResultPrinter {
         val r1 = overallResult[0]
         val r2 = overallResult[1]
 
-        val stringBuilderForHeader = StringBuilder()
         val stringBuilderForFirstResult = StringBuilder()
         val stringBuilderForSecondResult = StringBuilder()
 
-        appendToHeader(stringBuilderForHeader, r1.name!!, r2.name!!, FILE_NAME)
-        appendToBody(stringBuilderForFirstResult,r1.name!!,r2.name!!,FILE_NAME)
-        appendToBody(stringBuilderForSecondResult,r2.name!!,r1.name!!,FILE_NAME)
 
+        appendToBuilder(stringBuilderForFirstResult, r1.name!!, r2.name!!, FILE_NAME)
+       /* println("-----------------------")
+        println(stringBuilderForFirstResult)
+        println("-----------------------")*/
+
+        appendToBuilder(stringBuilderForSecondResult, r2.name!!, r1.name!!, FILE_NAME)
 
 
         val languageR1 = languageType(r1.type)
         val languageR2 = languageType(r2.type)
-        appendToHeader(stringBuilderForHeader, languageR2, languageR2, LANGUAGE)
-        appendToBody(stringBuilderForFirstResult,languageR1,languageR2,LANGUAGE)
-        appendToBody(stringBuilderForSecondResult,languageR2,languageR1,LANGUAGE)
+        appendToBuilder(stringBuilderForFirstResult, languageR1, languageR2, LANGUAGE)
 
-        appendToHeader(stringBuilderForHeader, r1.LOC.toString(), r2.LOC.toString(), LOC)
-        appendToBody(stringBuilderForFirstResult,r1.LOC.toString(),r2.LOC.toString(),LOC)
-        appendToBody(stringBuilderForSecondResult,r2.LOC.toString(),r1.LOC.toString(),LOC)
+      /*  println("-----------------------")
+        println(stringBuilderForFirstResult)
+        println("-----------------------")*/
+        appendToBuilder(stringBuilderForSecondResult, languageR2, languageR1, LANGUAGE)
 
-        appendToHeader(stringBuilderForHeader, r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC)
-        appendToBody(stringBuilderForFirstResult,r1.commentLOC.toString(),r2.commentLOC.toString(),COMMENT_LOC)
-        appendToBody(stringBuilderForSecondResult,r2.commentLOC.toString(),r1.commentLOC.toString(),COMMENT_LOC)
+        appendToBuilder(stringBuilderForFirstResult, r1.LOC.toString(), r2.LOC.toString(), LOC)
+        appendToBuilder(stringBuilderForSecondResult, r2.LOC.toString(), r1.LOC.toString(), LOC)
 
-        appendToHeader(stringBuilderForHeader, r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS)
-        appendToBody(stringBuilderForFirstResult,r1.numMethod.toString(),r2.numMethod.toString(),NUM_METHODS)
-        appendToBody(stringBuilderForSecondResult,r2.numMethod.toString(),r1.numMethod.toString(),NUM_METHODS)
+        appendToBuilder(stringBuilderForFirstResult, r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC)
+        appendToBuilder(stringBuilderForSecondResult, r2.commentLOC.toString(), r1.commentLOC.toString(), COMMENT_LOC)
 
-        appendToHeader(stringBuilderForHeader, r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS)
-        appendToBody(stringBuilderForFirstResult,r1.nImports.toString(),r2.nImports.toString(),N_IMPORTS)
-        appendToBody(stringBuilderForSecondResult,r2.nImports.toString(),r1.nImports.toString(),N_IMPORTS)
+        appendToBuilder(stringBuilderForFirstResult, r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS)
+        appendToBuilder(stringBuilderForSecondResult, r2.numMethod.toString(), r1.numMethod.toString(), NUM_METHODS)
+
+        appendToBuilder(stringBuilderForFirstResult, r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS)
+        appendToBuilder(stringBuilderForSecondResult, r2.nImports.toString(), r1.nImports.toString(), N_IMPORTS)
 
 
-        println(stringBuilderForHeader.toString())
+        println(headers(r1, r2))
+
         println(stringBuilderForFirstResult.toString())
+//        println(body(r1,r2).joinToString(separator = ""))
+
         println(stringBuilderForSecondResult.toString())
     }
+
+    private fun headers(r1: FileSummary, r2: FileSummary): kotlin.String {
+        val languageR1 = languageType(r1.type)
+        val languageR2 = languageType(r2.type)
+      return  buildString {
+            appendTo(r1.name!!, r2.name!!, FILE_NAME, FILE_NAME)
+            appendTo(languageR1, languageR2, LANGUAGE, LANGUAGE)
+            appendTo(r1.LOC.toString(), r2.LOC.toString(), LOC, LOC)
+            appendTo(r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC, COMMENT_LOC)
+            appendTo(r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS, NUM_METHODS)
+            appendTo(r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS, N_IMPORTS)
+        }
+    }
+
+    private fun body(r1: FileSummary, r2: FileSummary): kotlin.String {
+        val languageR1 = languageType(r1.type)
+        val languageR2 = languageType(r2.type)
+        return buildString {
+            appendTo(r1.name!!, r2.name!!, FILE_NAME, r1.name!!)
+            appendTo(languageR1, languageR2, LANGUAGE, languageR1)
+            appendTo(r1.LOC.toString(), r2.LOC.toString(), LOC, r1.LOC.toString())
+            appendTo(r1.commentLOC.toString(), r2.commentLOC.toString(), COMMENT_LOC, r1.commentLOC.toString())
+            appendTo(r1.numMethod.toString(), r2.numMethod.toString(), NUM_METHODS, r1.numMethod.toString())
+            appendTo(r1.nImports.toString(), r2.nImports.toString(), N_IMPORTS, r1.nImports.toString())
+        }
+    }
+
+
+    fun StringBuilder.appendTo(
+        param1: kotlin.String,
+        param2: kotlin.String,
+        type: kotlin.String,
+        appendLast: kotlin.String = ""
+    ) {
+        val content: kotlin.String = nCopies(
+            max(
+                (longestLengthOf(param1, param2, type) - type.length).toDouble(),
+                0.0
+            ).toInt(), " "
+        ).joinToString(separator = "")
+
+        append(content)
+        append(appendLast)
+    }
+
 
     private fun appendToHeader(
         stringBuilderForHeader: StringBuilder,
@@ -68,26 +118,40 @@ object ResultPrinter {
         type: kotlin.String
     ) {
 
+        val content = nCopies(
+            max(
+                (longestLengthOf(n1, n2, type) - type.length).toDouble(),
+                0.0
+            ).toInt(), " "
+        ).joinToString(separator = "")
+
         stringBuilderForHeader
-            .append(
-                String.join(
-                    "",
-                    Collections.nCopies<kotlin.String?>(
-                        max(
-                            (longestLengthOf(n1, n2, type) - type.length).toDouble(),
-                            0.0
-                        ).toInt(), " "
-                    )
-                )
-            )
+            .append(content)
             .append(type)
 
     }
 
-    fun appendToBody(builder: StringBuilder,param1:kotlin.String,param2: kotlin.String,type: kotlin.String){
-        builder.append(
-            maxLengthOf(param1, longestLengthOf(param1,param2,type))
+    // header -> append type, body -> append param
+    fun appendToBuilder(builder: StringBuilder, param1: kotlin.String, param2: kotlin.String, type: kotlin.String) {
+       /* val content: kotlin.String = nCopies(
+            max(
+                (longestLengthOf(param1, param2, type) - type.length).toDouble(),
+                0.0
+            ).toInt(), " "
+        ).joinToString(separator = "")*/
+        val content = String.join(
+            "",
+            nCopies(
+                max(
+                    (longestLengthOf(param1, param2, type) - param1.length).toDouble(),
+                    0.0
+                ).toInt(), " "
+            )
         )
+
+        builder
+            .append(content)
+            .append(param1)
     }
 
 
@@ -128,31 +192,28 @@ object ResultPrinter {
         ).toInt()
     }
 
-    private fun appendToBuilder(
-        stringBuilder: StringBuilder,
-        n1: kotlin.String,
-        n2: kotlin.String,
-        type: kotlin.String
-    ) {
+    /*    private fun appendToBuilder(
+            stringBuilder: StringBuilder,
+            n1: kotlin.String,
+            n2: kotlin.String,
+            type: kotlin.String
+        ) {
 
-        stringBuilder
-            .append(
-                String.join(
-                    "",
-                    Collections.nCopies<kotlin.String?>(
-                        max(
-                            (longestLengthOf(n1, n2, type) - type.length).toDouble(),
-                            0.0
-                        ).toInt(), " "
+            stringBuilder
+                .append(
+                    String.join(
+                        "",
+                        Collections.nCopies<kotlin.String?>(
+                            max(
+                                (longestLengthOf(n1, n2, type) - type.length).toDouble(),
+                                0.0
+                            ).toInt(), " "
+                        )
                     )
                 )
-            )
-            .append(type)
+                .append(type)
 
-    }
-
-
-
+        }*/
 
 
 }
