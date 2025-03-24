@@ -1,7 +1,6 @@
 package com.javabycomparison.kata.printing
 
 import com.javabycomparison.kata.analysis.FileSummary
-import com.javabycomparison.kata.analysis.languageType
 import java.util.Collections.nCopies
 import kotlin.Array
 import kotlin.Int
@@ -106,3 +105,30 @@ object ResultPrinter {
 
 
 }
+
+fun printFileSummary(file: FileSummary): String {
+    var language = languageType(file.type)
+    return (file.name
+            + "\t"
+            + language
+            + "\t"
+            + file.L
+            + "\t"
+            + file.LOC
+            + "\t"
+            + file.commentLOC
+            + "\t"
+            + file.numMethod
+            + "\t"
+            + file.nImports)
+}
+
+fun languageType(
+     type: Int,
+): String {
+     return when (type) {
+         0 -> "Java"
+         1 -> "Python"
+         else -> "other"
+     }
+ }

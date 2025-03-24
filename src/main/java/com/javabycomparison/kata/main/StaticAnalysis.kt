@@ -1,7 +1,7 @@
 package com.javabycomparison.kata.main
 
 import com.javabycomparison.kata.analysis.FileSummary
-import com.javabycomparison.kata.analysis.FileSummaryPrinter
+import com.javabycomparison.kata.printing.printFileSummary
 import com.javabycomparison.kata.printing.CSVPrinter
 import com.javabycomparison.kata.printing.ResultPrinter
 import com.javabycomparison.kata.search.SearchClient
@@ -32,7 +32,7 @@ class StaticAnalysis {
                 while (l < results.size) {
                     val resultData = results.get(l)
                     if (!smry) {
-                        println(FileSummaryPrinter().print(resultData))
+                        println(printFileSummary(resultData))
                     }
                     if (resultData.type == 0) {
                         javaLOC += resultData.LOC
@@ -73,17 +73,16 @@ class StaticAnalysis {
         }
 
         private fun analyze(p: String?, smry: Boolean) {
-            val analyzer = StaticAnalysis()
-            val overallResult = analyzer.run(if (p == null) "./src/" else p, smry)
-            if (overallResult != null) {
-                ResultPrinter.printOverallResults(overallResult as Array<FileSummary>)
-                try {
-                    CSVPrinter("output.csv").writeCSV(overallResult)
-                } catch (e: IOException) {
-                    System.err.println("Something went a bit wrong")
-                }
-            } else {
+            val overallResult = StaticAnalysis().run(if (p == null) "./src/" else p, smry)
+            if (overallResult == null) {
                 System.err.println("Something went terribly wrong")
+                return
+            }
+            ResultPrinter.printOverallResults(overallResult as Array<FileSummary>)
+            try {
+                CSVPrinter("output.csv").writeCSV(overallResult)
+            } catch (e: IOException) {
+                System.err.println("Something went a bit wrong")
             }
         }
     }
