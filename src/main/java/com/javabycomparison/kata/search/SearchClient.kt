@@ -15,34 +15,32 @@ class SearchClient(private val summary: Boolean) {
         val summarizedFiles = LinkedList<FileSummary?>()
         val file = Paths.get(directoryPath).toFile()
         // to-do - deal with exceptions
+        val allFiles =
         file.walk()
             .map { it.toPath() }
             .filter(Path::isGitOrHidden)
 
-            // if summary true -> return the files
-            .onEach { file ->
-        /*        if (summary){
-                    return@onEach
+            if (!summary){
+                allFiles.forEach { file->
+                    printFileTypeMessage(file)
                 }
-*/                when {
+            }
+
+            allFiles.onEach { file ->
+                  when {
                     isJavaFile(file) -> {
-                        printJavaMessage(file, this@SearchClient.summary)
                         summarizedFiles.add(javaAnalyzer(file))
                     }
 
                     isPythonFile(file) -> {
-                        printPythonMessage(file, this@SearchClient.summary)
                         summarizedFiles.add(pythonAnalyzer(file))
                     }
 
                     !Files.isDirectory(file) -> {
-                        printUnknownLanguageMessage(file, this@SearchClient.summary)
                         summarizedFiles.add(unknownLanguageAnalyzer(file))
                     }
 
-                    else -> {
-                        printSkippingMessage(file, this@SearchClient.summary)
-                    }
+
                 }
 
 
@@ -57,25 +55,41 @@ class SearchClient(private val summary: Boolean) {
         return summarizedFiles
     }
 
+    private fun printFileTypeMessage(file: Path) {
+        when {
+            isJavaFile(file) -> {
+                printJavaMessage(file)
+            }
 
-    private fun printSkippingMessage(file: Path?, summery: Boolean) {
-        if (summery) return
+            isPythonFile(file) -> {
+                printPythonMessage(file)
+            }
+
+            !Files.isDirectory(file) -> {
+                printUnknownLanguageMessage(file)
+            }
+
+            else -> {
+                printSkippingMessage(file)
+            }
+        }
+    }
+
+
+    private fun printSkippingMessage(file: Path?) {
         println("Skipping directory $file.")
     }
 
-    private fun printUnknownLanguageMessage(file: Path, summery: Boolean) {
-        if (summery) return
+    private fun printUnknownLanguageMessage(file: Path) {
         printLanguageMessage(file, " is neither a Java file nor a Python file.")
     }
 
-    private fun printPythonMessage(file: Path, summery: Boolean) {
-        if (summery) return
+    private fun printPythonMessage(file: Path) {
         printLanguageMessage(file, " is a Python file. It will be analyzed.")
     }
 }
 
-private fun printJavaMessage(file: Path?, summery: Boolean) {
-    if (summery) return
+private fun printJavaMessage(file: Path?) {
     printLanguageMessage(file, " is a Java file. It will be analyzed.")
 }
 
@@ -91,41 +105,12 @@ private fun isPythonFile(file: Path): Boolean = isFileOf(file, "py")
 private fun isFileOf(file: Path, type: String): Boolean = file.toString().matches((".*\\.$type").toRegex())
 
 
-/*
-fun
-
-        if (!summary){
-    summarizedFiles.forEach {
-            file ->
-
-        when {
-            isJavaFile(file) -> {
-                printJavaMessage(file, this@SearchClient.summary)
-                summarizedFiles.add(javaAnalyzer(file))
-            }
-
-            isPythonFile(file) -> {
-                printPythonMessage(file, this@SearchClient.summary)
-                summarizedFiles.add(pythonAnalyzer(file))
-            }
-
-            !Files.isDirectory(file) -> {
-                printUnknownLanguageMessage(file, this@SearchClient.summary)
-                summarizedFiles.add(unknownLanguageAnalyzer(file))
-            }
-
-            else -> {
-                printSkippingMessage(file, this@SearchClient.summary)
-            }
-        }
-    }
-}*/
 private fun Path.isGitOrHidden(): Boolean {
-    val gitFile = !this.toString().contains(".git")
+    val isGitFile = !this.toString().contains(".git")
     val isHidden = return try {
         !Files.isHidden(this)
     } catch (e: IOException) {
         false
     }
-    return gitFile || isHidden
+    return isGitFile || isHidden
 }
