@@ -13,10 +13,10 @@ import java.util.*
 class SearchClient(private val summary: Boolean) {
     fun collectAllFiles(directoryPath: String): LinkedList<FileSummary?>? {
         val summarizedFiles = LinkedList<FileSummary?>()
-        val file = Paths.get(directoryPath).toFile()
+        val rootDirectory = Paths.get(directoryPath).toFile()
         // to-do - deal with exceptions
         val allFiles =
-        file.walk()
+        rootDirectory.walk()
             .map { it.toPath() }
             .filter(Path::isGitOrHidden)
 
@@ -58,44 +58,36 @@ class SearchClient(private val summary: Boolean) {
     private fun printFileTypeMessage(file: Path) {
         when {
             isJavaFile(file) -> {
-                printJavaMessage(file)
+                println(getJavaMessage(file))
             }
 
             isPythonFile(file) -> {
-                printPythonMessage(file)
+                println(getPythonMessage(file))
             }
 
             !Files.isDirectory(file) -> {
-                printUnknownLanguageMessage(file)
+                println(getUnknownLanguageMessage(file))
             }
 
             else -> {
-                printSkippingMessage(file)
+                println(directorySkippingMessage(file))
             }
         }
     }
 
 
-    private fun printSkippingMessage(file: Path?) {
-        println("Skipping directory $file.")
-    }
 
-    private fun printUnknownLanguageMessage(file: Path) {
-        printLanguageMessage(file, " is neither a Java file nor a Python file.")
-    }
 
-    private fun printPythonMessage(file: Path) {
-        printLanguageMessage(file, " is a Python file. It will be analyzed.")
-    }
+    private fun directorySkippingMessage(file: Path?) = "Skipping directory $file."
+
+    private fun getUnknownLanguageMessage(file: Path) = getLanguageMessage(file, " is neither a Java file nor a Python file.")
+
+    private fun getPythonMessage(file: Path) = getLanguageMessage(file, " is a Python file. It will be analyzed.")
 }
 
-private fun printJavaMessage(file: Path?) {
-    printLanguageMessage(file, " is a Java file. It will be analyzed.")
-}
+private fun getJavaMessage(file: Path?) = getLanguageMessage(file, " is a Java file. It will be analyzed.")
 
-private fun printLanguageMessage(file: Path?, message: String) {
-    println("File $file$message")
-}
+private fun getLanguageMessage(file: Path?, message: String) =  "File $file$message"
 
 
 private fun isJavaFile(file: Path): Boolean = isFileOf(file, "java")
