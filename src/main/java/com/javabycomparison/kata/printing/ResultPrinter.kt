@@ -1,6 +1,7 @@
 package com.javabycomparison.kata.printing
 
 import com.javabycomparison.kata.analysis.FileSummary
+import com.javabycomparison.kata.analysis.languageType
 import java.util.Collections.nCopies
 import kotlin.Array
 import kotlin.Int
@@ -29,8 +30,8 @@ object ResultPrinter {
     }
 
     private fun headers(r1: FileSummary, r2: FileSummary): String {
-        val languageR1 = languageType(r1.type)
-        val languageR2 = languageType(r2.type)
+        val languageR1 = r1.languageType(r1.type)
+        val languageR2 = r2.languageType(r2.type)
         return buildString {
             appendTo(r1.name!!, r2.name!!, FILE_NAME, FILE_NAME)
             appendTo(languageR1, languageR2, LANGUAGE, LANGUAGE)
@@ -62,8 +63,8 @@ object ResultPrinter {
 
 
     private fun body(r1: FileSummary, r2: FileSummary): String {
-        val languageR1 = languageType(r1.type)
-        val languageR2 = languageType(r2.type)
+        val languageR1 = r1.languageType(r1.type)
+        val languageR2 = r2.languageType(r2.type)
         return buildString {
             appendTo(r1.name!!, r2.name!!, FILE_NAME, r1.name!!)
             appendTo(languageR1, languageR2, LANGUAGE, languageR1)
@@ -106,29 +107,3 @@ object ResultPrinter {
 
 }
 
-fun printFileSummary(file: FileSummary): String {
-    var language = languageType(file.type)
-    return (file.name
-            + "\t"
-            + language
-            + "\t"
-            + file.L
-            + "\t"
-            + file.LOC
-            + "\t"
-            + file.commentLOC
-            + "\t"
-            + file.numMethod
-            + "\t"
-            + file.nImports)
-}
-
-fun languageType(
-     type: Int,
-): String {
-     return when (type) {
-         0 -> "Java"
-         1 -> "Python"
-         else -> "other"
-     }
- }

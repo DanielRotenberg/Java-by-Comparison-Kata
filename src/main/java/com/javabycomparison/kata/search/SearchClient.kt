@@ -12,31 +12,32 @@ import java.util.*
 
 class SearchClient(private val summary: Boolean) {
     fun collectAllFiles(directoryPath: String): LinkedList<FileSummary?>? {
-        val resultsList = LinkedList<FileSummary?>()
+        val summarizedFiles = LinkedList<FileSummary?>()
         val file = Paths.get(directoryPath).toFile()
         // to-do - deal with exceptions
-        file.walk().map { it.toPath() }.filter { path: Path? -> !path.toString().contains(".git") }
-            .filter { path: Path? ->
-                try {
-                    return@filter !Files.isHidden(path)
-                } catch (e: IOException) {
-                    return@filter false
+        file.walk()
+            .map { it.toPath() }
+            .filter(Path::isGitOrHidden)
+
+            // if summary true -> return the files
+            .onEach { file ->
+        /*        if (summary){
+                    return@onEach
                 }
-            }.onEach { file ->
-                when {
+*/                when {
                     isJavaFile(file) -> {
                         printJavaMessage(file, this@SearchClient.summary)
-                        resultsList.add(javaAnalyzer(file))
+                        summarizedFiles.add(javaAnalyzer(file))
                     }
 
                     isPythonFile(file) -> {
                         printPythonMessage(file, this@SearchClient.summary)
-                        resultsList.add(pythonAnalyzer(file))
+                        summarizedFiles.add(pythonAnalyzer(file))
                     }
 
                     !Files.isDirectory(file) -> {
                         printUnknownLanguageMessage(file, this@SearchClient.summary)
-                        resultsList.add(unknownLanguageAnalyzer(file))
+                        summarizedFiles.add(unknownLanguageAnalyzer(file))
                     }
 
                     else -> {
@@ -47,47 +48,15 @@ class SearchClient(private val summary: Boolean) {
 
             }.toList()
 
-        /*try {
-            for (file in Files.walk(Paths.get(directoryPath))
-                .filter { path: Path? -> !path.toString().contains(".git") }
-                .filter { path: Path? ->
-                    try {
-                        return@filter !Files.isHidden(path)
-                    } catch (e: IOException) {
-                        return@filter false
-                    }
-                }
 
-                .sorted()
-
-                .collect(Collectors.toList())) {
-                when {
-                    isJavaFile(file) -> {
-                        printJavaMessage(file, this@SearchClient.summery)
-                        resultsList.add(javaAnalyzer(file))
-                    }
-
-                    isPythonFile(file) -> {
-                        printPythonMessage(file, this@SearchClient.summery)
-                        resultsList.add(pythonAnalyzer(file))
-                    }
-
-                    !Files.isDirectory(file) -> {
-                        printUnknownLanguageMessage(file, this@SearchClient.summery)
-                        resultsList.add(unknownLanguageAnalyzer(file))
-                    }
-
-                    else -> {
-                        printSkippingMessage(file, this@SearchClient.summery)
-                    }
-                }
-            }
+        /*
         } catch (e: Exception) {
             e.printStackTrace()
             return null
         }*/
-        return resultsList
+        return summarizedFiles
     }
+
 
     private fun printSkippingMessage(file: Path?, summery: Boolean) {
         if (summery) return
@@ -120,3 +89,43 @@ private fun isJavaFile(file: Path): Boolean = isFileOf(file, "java")
 private fun isPythonFile(file: Path): Boolean = isFileOf(file, "py")
 
 private fun isFileOf(file: Path, type: String): Boolean = file.toString().matches((".*\\.$type").toRegex())
+
+
+/*
+fun
+
+        if (!summary){
+    summarizedFiles.forEach {
+            file ->
+
+        when {
+            isJavaFile(file) -> {
+                printJavaMessage(file, this@SearchClient.summary)
+                summarizedFiles.add(javaAnalyzer(file))
+            }
+
+            isPythonFile(file) -> {
+                printPythonMessage(file, this@SearchClient.summary)
+                summarizedFiles.add(pythonAnalyzer(file))
+            }
+
+            !Files.isDirectory(file) -> {
+                printUnknownLanguageMessage(file, this@SearchClient.summary)
+                summarizedFiles.add(unknownLanguageAnalyzer(file))
+            }
+
+            else -> {
+                printSkippingMessage(file, this@SearchClient.summary)
+            }
+        }
+    }
+}*/
+private fun Path.isGitOrHidden(): Boolean {
+    val gitFile = !this.toString().contains(".git")
+    val isHidden = return try {
+        !Files.isHidden(this)
+    } catch (e: IOException) {
+        false
+    }
+    return gitFile || isHidden
+}

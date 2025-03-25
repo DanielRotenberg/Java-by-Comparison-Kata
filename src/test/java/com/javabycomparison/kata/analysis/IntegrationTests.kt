@@ -13,12 +13,10 @@ internal class IntegrationTests {
             capture(
                 object : Runnable {
                     override fun run() {
-                        val a = "hi"
                         val array = arrayOfNulls<String>(2)
                         array[0] = "src/main/resources"
                         array[1] = "smry"
                         StaticAnalysis.main(arrayOf("src/main/resources", "smry"))
-                        //                StaticAnalysis.main("src/main/resources", "smry");
                     }
                 })
         Assertions.assertEquals(
@@ -38,7 +36,6 @@ internal class IntegrationTests {
                         val array = arrayOfNulls<String>(1)
                         array[0] = "src/main/resources/java_files"
                         StaticAnalysis.main(arrayOf("src/main/resources/java_files"))
-                        //                StaticAnalysis.main("src/main/resources/java_files");
                     }
                 })
         Assertions.assertEquals(
