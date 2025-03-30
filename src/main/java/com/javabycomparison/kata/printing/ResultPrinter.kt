@@ -18,7 +18,7 @@ object ResultPrinter {
     private const val N_IMPORTS = "  Number of Imports"
 
     @JvmStatic
-    fun printOverallResults(overallResult: Array<FileSummary>) {
+    fun printOverallResults(overallResult: List<FileSummary>) {
         val r1 = overallResult[0]
         val r2 = overallResult[1]
 

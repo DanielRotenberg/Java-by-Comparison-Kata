@@ -7,11 +7,11 @@ import java.io.IOException
 import java.nio.file.Paths
 
 internal class JavaAnalyzerTests {
-    @Test
+/*    @Test
     fun analyze() {
         val javaAnalyzer = javaAnalyzer(null)
         Assertions.assertNull(javaAnalyzer)
-    }
+    }*/
 
     @Test
     fun analyzeShouldThrowIOException() {

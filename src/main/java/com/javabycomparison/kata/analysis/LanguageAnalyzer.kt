@@ -4,14 +4,15 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-
-fun javaAnalyzer(file: Path?): FileSummary? {
+// TODO -> remove all null stuff, shouldn't be null as param
+fun javaAnalyzer(file: Path): FileSummary {
     fun String.isImport() = startWith("import")
     fun String.isComment() = startWith("//") || startWith("*") || startWith("/*")
 
-    if (file == null) {
-        return null
-    }
+//    if (file == null) {
+////        return null
+//        throw Exception("path was null")
+//    }
     try {
         with(Files.readAllLines(file)) {
             return FileSummary(

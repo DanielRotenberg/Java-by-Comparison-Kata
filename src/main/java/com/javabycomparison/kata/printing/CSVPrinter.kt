@@ -19,13 +19,14 @@ class CSVPrinter(outputFile: kotlin.String) {
     }
 
     @Throws(IOException::class)
-    fun writeCSV(overallResult: Array<FileSummary?>) {
+    fun writeCSV(overallResult: List<FileSummary>) {
         val writer = FileOutputStream(csvFile.toFile())
         writer.write(
             "File Name,Language,Lines of Code,Number of Comments,Number of Methods,Number of Imports\n"
                 .toByteArray()
         )
-        Arrays.stream<FileSummary?>(overallResult)
+//        Arrays.stream<FileSummary>(overallResult)
+            overallResult
             .filter { result: FileSummary? -> null != result }
             .map { result: FileSummary? ->
                 (String.join(
@@ -53,7 +54,7 @@ class CSVPrinter(outputFile: kotlin.String) {
                     + System.lineSeparator();
               }
             })*/
-            .map<ByteArray?> { obj: kotlin.String? -> obj!!.toByteArray() }
+            .map { obj: kotlin.String? -> obj!!.toByteArray() }
             .forEach { str: ByteArray? ->
                 try {
                     writer.write(str)

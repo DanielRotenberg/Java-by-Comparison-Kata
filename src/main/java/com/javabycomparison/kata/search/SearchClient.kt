@@ -11,83 +11,97 @@ import java.nio.file.Paths
 import java.util.*
 
 class SearchClient(private val summary: Boolean) {
-    fun collectAllFiles(directoryPath: String): LinkedList<FileSummary?>? {
-        val summarizedFiles = LinkedList<FileSummary?>()
+    fun collectAllFiles(directoryPath: String): List<FileSummary>? {
+        val summarizedFiles = LinkedList<FileSummary>()
         val rootDirectory = Paths.get(directoryPath).toFile()
         // to-do - deal with exceptions
-        val allFiles =
-        rootDirectory.walk()
-            .map { it.toPath() }
+
+        val allFiles: Sequence<Path> = rootDirectory.walk()
+            .map { it.toPath() } // can throw InvalidPathException - to-do -> need to deal with it
             .filter(Path::isGitOrHidden)
 
-            if (!summary){
-                allFiles.forEach { file->
-                    printFileTypeMessage(file)
-                }
+        if (!summary) {
+            allFiles.forEach { file ->
+                println(getFileTypeMessage(file))
             }
+        }
 
-            allFiles.onEach { file ->
-                  when {
-                    isJavaFile(file) -> {
-                        summarizedFiles.add(javaAnalyzer(file))
-                    }
-
-                    isPythonFile(file) -> {
-                        summarizedFiles.add(pythonAnalyzer(file))
-                    }
-
-                    !Files.isDirectory(file) -> {
-                        summarizedFiles.add(unknownLanguageAnalyzer(file))
-                    }
+        allFiles.onEach { file ->
+            addingSummaryFile(file, summarizedFiles)
 
 
-                }
+        }.toList()
 
+//                   allFiles.onEach { file ->
+//            addingSummaryFile(file, summarizedFiles)
+//
+//
+//        }.toList()
 
-            }.toList()
-
+//                val stuff: List<FileSummary> = allFiles.map(::mapToSummaryFile).toList()
+//                return stuff
 
         /*
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }*/
+} catch (e: Exception) {
+    e.printStackTrace()
+    return null
+}*/
         return summarizedFiles
+//        return rootDirectory.walk()
+//            .map { it.toPath() }
+//            .filter(Path::isGitOrHidden)
+//            .map(::mapToSummaryFile).toList()
     }
 
-    private fun printFileTypeMessage(file: Path) {
+    private fun addingSummaryFile(
+        file: Path,
+        summarizedFiles: LinkedList<FileSummary>
+    ) {
         when {
-            isJavaFile(file) -> {
-                println(getJavaMessage(file))
-            }
+            isJavaFile(file) -> summarizedFiles.add(javaAnalyzer(file))
 
-            isPythonFile(file) -> {
-                println(getPythonMessage(file))
-            }
+            isPythonFile(file) -> summarizedFiles.add(pythonAnalyzer(file))
 
-            !Files.isDirectory(file) -> {
-                println(getUnknownLanguageMessage(file))
-            }
+            !Files.isDirectory(file) -> summarizedFiles.add(unknownLanguageAnalyzer(file))
 
-            else -> {
-                println(directorySkippingMessage(file))
-            }
         }
     }
 
+    fun mapToSummaryFile(file: Path): FileSummary {
+        return when {
+            isJavaFile(file) -> javaAnalyzer(file)
 
+            isPythonFile(file) -> pythonAnalyzer(file)
+
+            !Files.isDirectory(file) -> unknownLanguageAnalyzer(file)
+            else -> unknownLanguageAnalyzer(file)
+
+        }
+    }
+
+    fun getFileTypeMessage(file: Path): String = when {
+
+        Files.isDirectory(file) -> directorySkippingMessage(file)
+
+        isJavaFile(file) -> getJavaMessage(file)
+
+        isPythonFile(file) -> getPythonMessage(file)
+
+        else -> getUnknownLanguageMessage(file)
+    }
 
 
     private fun directorySkippingMessage(file: Path?) = "Skipping directory $file."
 
-    private fun getUnknownLanguageMessage(file: Path) = getLanguageMessage(file, " is neither a Java file nor a Python file.")
+    private fun getUnknownLanguageMessage(file: Path) =
+        getLanguageMessage(file, " is neither a Java file nor a Python file.")
 
     private fun getPythonMessage(file: Path) = getLanguageMessage(file, " is a Python file. It will be analyzed.")
 }
 
 private fun getJavaMessage(file: Path?) = getLanguageMessage(file, " is a Java file. It will be analyzed.")
 
-private fun getLanguageMessage(file: Path?, message: String) =  "File $file$message"
+private fun getLanguageMessage(file: Path?, message: String) = "File $file$message"
 
 
 private fun isJavaFile(file: Path): Boolean = isFileOf(file, "java")
