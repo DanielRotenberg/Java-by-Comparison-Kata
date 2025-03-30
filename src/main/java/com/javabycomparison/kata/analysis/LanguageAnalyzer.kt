@@ -4,7 +4,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-// TODO -> remove all null stuff, shouldn't be null as param
+
 fun javaAnalyzer(file: Path): FileSummary {
     fun String.isImport() = startWith("import")
     fun String.isComment() = startWith("//") || startWith("*") || startWith("/*")
