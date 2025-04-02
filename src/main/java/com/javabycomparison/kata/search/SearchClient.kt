@@ -14,23 +14,25 @@ class SearchClient(private val summary: Boolean) {
     fun collectAllFiles(directoryPath: String): List<FileSummary>? {
         val summarizedFiles = LinkedList<FileSummary>()
         val rootDirectory = Paths.get(directoryPath).toFile()
+
         // to-do - deal with exceptions
 
-        val allFiles: Sequence<Path> = rootDirectory.walk()
+        val allFiles: List<Path> = rootDirectory.walk()
             .map { it.toPath() } // can throw InvalidPathException - to-do -> need to deal with it
             .filter(Path::isGitOrHidden)
+            .toList()
 
         if (!summary) {
             allFiles.forEach { file ->
                 println(getFileTypeMessage(file))
             }
         }
+        // for some reason this is not working as return type???
+        allFiles.map(::mapToSummaryFile)
 
         allFiles.onEach { file ->
             addingSummaryFile(file, summarizedFiles)
-
-
-        }.toList()
+        }
 
 //                   allFiles.onEach { file ->
 //            addingSummaryFile(file, summarizedFiles)
@@ -55,7 +57,7 @@ class SearchClient(private val summary: Boolean) {
 
     private fun addingSummaryFile(
         file: Path,
-        summarizedFiles: LinkedList<FileSummary>
+        summarizedFiles: MutableList<FileSummary>
     ) {
         when {
             isJavaFile(file) -> summarizedFiles.add(javaAnalyzer(file))

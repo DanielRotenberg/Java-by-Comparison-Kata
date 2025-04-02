@@ -9,10 +9,6 @@ fun javaAnalyzer(file: Path): FileSummary {
     fun String.isImport() = startWith("import")
     fun String.isComment() = startWith("//") || startWith("*") || startWith("/*")
 
-//    if (file == null) {
-////        return null
-//        throw Exception("path was null")
-//    }
     try {
         with(Files.readAllLines(file)) {
             return FileSummary(
